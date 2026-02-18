@@ -1,0 +1,170 @@
+/* ============================================
+   ASJ Espelette — Responsive Stylesheet
+   ============================================ */
+
+/* --- Tablette (max 1024px) --- */
+@media (max-width: 1024px) {
+    .footer-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .contact-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-xl);
+    }
+
+    .hero h1 {
+        font-size: 2.8rem;
+    }
+}
+
+/* --- Tablette portrait / Mobile large (max 768px) --- */
+@media (max-width: 768px) {
+    /* Navigation mobile */
+    .main-nav {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: var(--color-white);
+        box-shadow: var(--shadow-lg);
+        z-index: 999;
+    }
+
+    .main-nav.is-open {
+        display: block;
+    }
+
+    .main-nav ul {
+        flex-direction: column;
+        padding: var(--spacing-md);
+    }
+
+    .main-nav a {
+        padding: var(--spacing-md);
+        border-bottom: 1px solid var(--color-light-gray);
+    }
+
+    .menu-toggle {
+        display: flex;
+    }
+
+    /* Hero */
+    .hero {
+        height: 50vh;
+        min-height: 300px;
+    }
+
+    .hero h1 {
+        font-size: 2.2rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.1rem;
+    }
+
+    /* Page banner */
+    .page-banner {
+        padding: var(--spacing-xl) 0 var(--spacing-lg);
+    }
+
+    .page-banner h1 {
+        font-size: 2rem;
+    }
+
+    /* Sections */
+    .section {
+        padding: var(--spacing-xl) 0;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+    }
+
+    /* Grids */
+    .news-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .equipes-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .coachs-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .bureau-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .galerie-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Footer */
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+        text-align: center;
+    }
+
+    .footer-logo {
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+/* --- Mobile (max 480px) --- */
+@media (max-width: 480px) {
+    .hero h1 {
+        font-size: 1.8rem;
+    }
+
+    .hero-subtitle {
+        font-size: 0.95rem;
+    }
+
+    .page-banner h1 {
+        font-size: 1.6rem;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+    }
+
+    .equipes-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .coachs-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .galerie-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .galerie-filters {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .social-feeds {
+        grid-template-columns: 1fr;
+    }
+
+    .logo-img {
+        height: 38px;
+    }
+
+    .container {
+        padding: 0 var(--spacing-sm);
+    }
+
+    .matchs-embed iframe,
+    .agenda-embed iframe {
+        height: 500px;
+    }
+}

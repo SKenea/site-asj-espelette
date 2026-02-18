@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="eu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ASJ Ezpeletarekin harremanetan jarri - Formularioa, helbidea, entrenamendu ordutegiak.">
+    <title>Harremanetan jarri - ASJ Ezpeleta</title>
+    <link rel="stylesheet" href="/src/css/main.css">
+    <link rel="stylesheet" href="/src/css/responsive.css">
+    <link rel="icon" href="/src/img/logos/favicon.ico">
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-top">
+            <div class="container">
+                <div class="logo">
+                    <a href="/eu/"><img src="/src/img/logos/logo-asje.png" alt="ASJ Ezpeleta" class="logo-img"></a>
+                </div>
+                <nav class="main-nav" id="main-nav">
+                    <ul>
+                        <li><a href="/eu/">Hasiera</a></li>
+                        <li><a href="/eu/kluba.html">Kluba</a></li>
+                        <li><a href="/eu/taldeak.html">Taldeak</a></li>
+                        <li><a href="/eu/egutegia.html">Egutegia & Emaitzak</a></li>
+                        <li><a href="/eu/argazkiak.html">Argazkiak</a></li>
+                        <li><a href="/eu/bazkideak.html">Bazkideak</a></li>
+                        <li><a href="/eu/harremanetan.html" class="active">Harremanetan jarri</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions">
+                    <div class="lang-switch">
+                        <a href="/fr/contact.html" class="lang-btn">FR</a>
+                        <span class="lang-sep">|</span>
+                        <a href="/eu/harremanetan.html" class="lang-btn active">EUS</a>
+                    </div>
+                    <button class="menu-toggle" id="menu-toggle" aria-label="Menua">
+                        <span></span><span></span><span></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="page-banner">
+        <div class="page-banner-overlay"></div>
+        <div class="container"><h1>Harremanetan jarri</h1></div>
+    </section>
+
+    <section class="section section-contact">
+        <div class="container">
+            <div class="contact-grid">
+                <div class="contact-form-wrapper">
+                    <h2>Idatzi guri</h2>
+                    <form class="contact-form" id="contact-form" action="#" method="POST">
+                        <div class="form-group">
+                            <label for="contact-name">Izena *</label>
+                            <input type="text" id="contact-name" name="name" required autocomplete="name">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-email">Emaila *</label>
+                            <input type="email" id="contact-email" name="email" required autocomplete="email">
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-subject">Gaia *</label>
+                            <input type="text" id="contact-subject" name="subject" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-message">Mezua *</label>
+                            <textarea id="contact-message" name="message" rows="6" required></textarea>
+                        </div>
+                        <div class="form-group" style="display:none" aria-hidden="true">
+                            <input type="text" name="website" tabindex="-1" autocomplete="off">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Bidali</button>
+                    </form>
+                </div>
+
+                <div class="contact-info-wrapper">
+                    <h2>Informazio praktikoa</h2>
+                    <div class="contact-info">
+                        <div class="contact-info-item">
+                            <h3>Helbidea</h3>
+                            <p>Jean Eizaguirre Estadioa<br>64250 Ezpeleta</p>
+                        </div>
+                        <div class="contact-info-item">
+                            <h3>Telefonoa</h3>
+                            <p>[Zenbakia osatzeko]</p>
+                        </div>
+                        <div class="contact-info-item">
+                            <h3>Entrenamendu ordutegiak</h3>
+                            <p>[Ordutegiak klubak osatzeko]</p>
+                        </div>
+                    </div>
+                    <div class="contact-map">
+                        <h3>Nola iritsi</h3>
+                        <iframe
+                            src="https://www.openstreetmap.org/export/embed.html?bbox=-1.4520%2C43.3380%2C-1.4350%2C43.3480&amp;layer=mapnik&amp;marker=43.3430%2C-1.4435"
+                            title="Nola iritsi - Jean Eizaguirre Estadioa, Ezpeleta"
+                            width="100%"
+                            height="300"
+                            frameborder="0"
+                            loading="lazy">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <img src="/src/img/logos/logo-asje.png" alt="ASJ Ezpeleta" class="footer-logo">
+                    <p>ASJ Ezpeleta<br>Jean Eizaguirre Estadioa<br>64250 Ezpeleta</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Nabigazioa</h4>
+                    <ul>
+                        <li><a href="/eu/">Hasiera</a></li>
+                        <li><a href="/eu/kluba.html">Kluba</a></li>
+                        <li><a href="/eu/taldeak.html">Taldeak</a></li>
+                        <li><a href="/eu/egutegia.html">Egutegia</a></li>
+                        <li><a href="/eu/harremanetan.html">Harremanetan jarri</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Lotura erabilgarriak</h4>
+                    <ul>
+                        <li><a href="#" target="_blank" rel="noopener">Sport Easy</a></li>
+                        <li><a href="/eu/bazkideak.html">Bazkide bihurtu</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Jarrai gaitzazu</h4>
+                    <div class="footer-social">
+                        <a href="#" target="_blank" rel="noopener">Instagram</a>
+                        <a href="#" target="_blank" rel="noopener">Facebook</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 ASJ Ezpeleta. Eskubide guztiak erreserbatuta.</p>
+            </div>
+        </div>
+    </footer>
+    <script src="/src/js/main.js"></script>
+    <script src="/src/js/contact.js"></script>
+</body>
+</html>

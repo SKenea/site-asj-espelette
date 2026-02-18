@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - ASJ Espelette</title>
+    <style>
+        :root {
+            --blue: #0070A0;
+            --blue-dark: #005580;
+            --dark: #1a1a1a;
+            --gray: #6b7280;
+            --light: #f4f5f7;
+            --white: #fff;
+            --border: #e5e7eb;
+            --red: #dc2626;
+            --green: #16a34a;
+            --radius: 8px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--light); color: var(--dark); }
+
+        /* Login */
+        .login-screen {
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh;
+        }
+        .login-box {
+            background: var(--white); padding: 2.5rem; border-radius: var(--radius);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 360px; text-align: center;
+        }
+        .login-box h1 { font-size: 1.2rem; color: var(--blue); margin-bottom: 1.5rem; }
+        .login-box input {
+            width: 100%; padding: 0.6rem 0.8rem; margin-bottom: 0.8rem;
+            border: 1px solid var(--border); border-radius: 4px; font-size: 0.9rem;
+        }
+        .login-box .btn { width: 100%; }
+        .login-error { color: var(--red); font-size: 0.85rem; margin-bottom: 0.5rem; display: none; }
+
+        /* Header admin */
+        .admin-header {
+            background: var(--blue); color: var(--white);
+            padding: 0.8rem 1.5rem; display: flex; justify-content: space-between; align-items: center;
+        }
+        .admin-header h1 { font-size: 1rem; font-weight: 600; }
+        .admin-header-actions { display: flex; gap: 1rem; align-items: center; }
+        .admin-header a { color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.85rem; }
+        .admin-header a:hover { color: var(--white); }
+
+        /* Tabs */
+        .admin-tabs {
+            display: flex; background: var(--white); border-bottom: 2px solid var(--border);
+            padding: 0 1.5rem;
+        }
+        .tab-btn {
+            padding: 0.8rem 1.5rem; border: none; background: none; cursor: pointer;
+            font-weight: 600; font-size: 0.9rem; color: var(--gray);
+            border-bottom: 3px solid transparent; margin-bottom: -2px;
+        }
+        .tab-btn.active { color: var(--blue); border-bottom-color: var(--blue); }
+
+        /* Main */
+        .admin-main { max-width: 960px; margin: 1.5rem auto; padding: 0 1rem; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        /* Cards */
+        .card {
+            background: var(--white); border-radius: var(--radius);
+            padding: 1.5rem; margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+        .card h2 {
+            font-size: 1rem; color: var(--blue); margin-bottom: 1rem;
+            padding-bottom: 0.5rem; border-bottom: 2px solid var(--border);
+        }
+
+        /* Forms */
+        .form-row { margin-bottom: 0.8rem; }
+        .form-row label { display: block; font-weight: 600; font-size: 0.8rem; margin-bottom: 0.2rem; color: var(--dark); }
+        .form-row input, .form-row textarea, .form-row select {
+            width: 100%; padding: 0.5rem 0.7rem; border: 1px solid var(--border);
+            border-radius: 4px; font-family: inherit; font-size: 0.9rem;
+        }
+        .form-row textarea { resize: vertical; min-height: 80px; }
+        .form-row-inline { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+
+        /* Buttons */
+        .btn {
+            display: inline-block; padding: 0.5rem 1.2rem; border: none; border-radius: 4px;
+            cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: opacity 0.2s;
+        }
+        .btn:hover { opacity: 0.85; }
+        .btn-blue { background: var(--blue); color: var(--white); }
+        .btn-red { background: var(--red); color: var(--white); }
+        .btn-outline { background: none; border: 1px solid var(--border); color: var(--gray); }
+        .btn-sm { padding: 0.3rem 0.8rem; font-size: 0.8rem; }
+
+        /* Article list */
+        .article-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0.8rem 0; border-bottom: 1px solid var(--border);
+        }
+        .article-item:last-child { border-bottom: none; }
+        .article-info h3 { font-size: 0.9rem; margin-bottom: 0.15rem; }
+        .article-info .meta { font-size: 0.8rem; color: var(--gray); }
+        .article-actions { display: flex; gap: 0.4rem; }
+
+        /* Photo grid */
+        .photo-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 0.8rem;
+        }
+        .photo-item {
+            position: relative; border-radius: var(--radius); overflow: hidden;
+            aspect-ratio: 4/3; background: var(--light);
+        }
+        .photo-item img { width: 100%; height: 100%; object-fit: cover; }
+        .photo-item .photo-overlay {
+            position: absolute; inset: 0; background: rgba(0,0,0,0.5);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.2s;
+        }
+        .photo-item:hover .photo-overlay { opacity: 1; }
+        .photo-label {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            padding: 0.3rem 0.5rem; background: rgba(0,0,0,0.6); color: var(--white);
+            font-size: 0.75rem;
+        }
+
+        /* Upload zone */
+        .upload-zone {
+            border: 2px dashed var(--border); border-radius: var(--radius);
+            padding: 2rem; text-align: center; cursor: pointer;
+            color: var(--gray); transition: border-color 0.2s;
+        }
+        .upload-zone:hover, .upload-zone.dragover { border-color: var(--blue); color: var(--blue); }
+        .upload-zone input[type="file"] { display: none; }
+
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 1.5rem; right: 1.5rem; padding: 0.8rem 1.5rem;
+            border-radius: var(--radius); color: var(--white); font-weight: 600;
+            font-size: 0.85rem; z-index: 9999; opacity: 0; transition: opacity 0.3s;
+        }
+        .toast.show { opacity: 1; }
+        .toast-ok { background: var(--green); }
+        .toast-err { background: var(--red); }
+
+        [hidden] { display: none !important; }
+    </style>
+</head>
+<body>
+
+<!-- ====== LOGIN ====== -->
+<div id="login-screen" class="login-screen">
+    <div class="login-box">
+        <h1>ASJ Espelette<br>Administration</h1>
+        <div id="login-error" class="login-error">Identifiants incorrects</div>
+        <input type="text" id="login-user" placeholder="Identifiant" autocomplete="username">
+        <input type="password" id="login-pass" placeholder="Mot de passe" autocomplete="current-password">
+        <button class="btn btn-blue" id="login-btn">Se connecter</button>
+    </div>
+</div>
+
+<!-- ====== ADMIN ====== -->
+<div id="admin-app" hidden>
+    <header class="admin-header">
+        <h1>ASJ Espelette &mdash; Administration</h1>
+        <div class="admin-header-actions">
+            <a href="/fr/" target="_blank">Voir le site</a>
+            <button class="btn btn-sm btn-outline" id="logout-btn" style="color:#fff;border-color:rgba(255,255,255,0.4);">Deconnexion</button>
+        </div>
+    </header>
+
+    <div class="admin-tabs">
+        <button class="tab-btn active" data-tab="articles">Actualites</button>
+        <button class="tab-btn" data-tab="galerie">Galerie photos</button>
+    </div>
+
+    <main class="admin-main">
+
+        <!-- ====== TAB ARTICLES ====== -->
+        <div id="tab-articles" class="tab-panel active">
+
+            <!-- Formulaire creation/edition -->
+            <div class="card" id="article-form-card">
+                <h2 id="article-form-title">Nouvel article</h2>
+                <input type="hidden" id="article-edit-id" value="">
+                <div class="form-row">
+                    <label>Date</label>
+                    <input type="date" id="art-date">
+                </div>
+                <div class="form-row">
+                    <label>Image (nom du fichier dans uploads/ ou URL)</label>
+                    <input type="text" id="art-image" placeholder="ex: 2026-02-16_abc123.jpg">
+                </div>
+
+                <div class="form-row-inline">
+                    <div>
+                        <div class="form-row">
+                            <label>Titre (francais) *</label>
+                            <input type="text" id="art-title-fr" required>
+                        </div>
+                        <div class="form-row">
+                            <label>Resume (francais)</label>
+                            <textarea id="art-summary-fr" rows="2"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <label>Contenu (francais)</label>
+                            <textarea id="art-content-fr" rows="4"></textarea>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-row">
+                            <label>Titre (euskara)</label>
+                            <input type="text" id="art-title-eu">
+                        </div>
+                        <div class="form-row">
+                            <label>Resume (euskara)</label>
+                            <textarea id="art-summary-eu" rows="2"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <label>Contenu (euskara)</label>
+                            <textarea id="art-content-eu" rows="4"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display:flex;gap:0.5rem;">
+                    <button class="btn btn-blue" id="art-save-btn">Publier</button>
+                    <button class="btn btn-outline" id="art-cancel-btn" hidden>Annuler</button>
+                </div>
+            </div>
+
+            <!-- Liste des articles -->
+            <div class="card">
+                <h2>Articles publies</h2>
+                <div id="articles-list">
+                    <p style="color:var(--gray);font-size:0.9rem;">Chargement...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====== TAB GALERIE ====== -->
+        <div id="tab-galerie" class="tab-panel">
+
+            <!-- Upload -->
+            <div class="card">
+                <h2>Ajouter des photos</h2>
+                <div class="form-row-inline" style="margin-bottom:0.8rem;">
+                    <div class="form-row">
+                        <label>Categorie</label>
+                        <select id="photo-category">
+                            <option value="matchs">Matchs</option>
+                            <option value="tournois">Tournois</option>
+                            <option value="evenements">Evenements</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <label>Legende (FR / EUS)</label>
+                        <div style="display:flex;gap:0.4rem;">
+                            <input type="text" id="photo-label-fr" placeholder="Francais">
+                            <input type="text" id="photo-label-eu" placeholder="Euskara">
+                        </div>
+                    </div>
+                </div>
+                <div class="upload-zone" id="upload-zone">
+                    <input type="file" id="photo-input" accept="image/jpeg,image/png,image/webp,image/gif" multiple>
+                    <p><strong>Cliquez ici</strong> ou glissez vos photos<br><small>JPG, PNG, WebP — max 5 Mo par fichier</small></p>
+                </div>
+            </div>
+
+            <!-- Grille photos -->
+            <div class="card">
+                <h2>Photos publiees</h2>
+                <div id="photo-grid" class="photo-grid">
+                    <p style="color:var(--gray);font-size:0.9rem;">Chargement...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Toast notification -->
+<div id="toast" class="toast"></div>
+
+<script>
+(function() {
+    var API = '/admin/api.php';
+
+    // --- Utils ---
+    function $(id) { return document.getElementById(id); }
+    function toast(msg, ok) {
+        var t = $('toast');
+        t.textContent = msg;
+        t.className = 'toast show ' + (ok ? 'toast-ok' : 'toast-err');
+        setTimeout(function() { t.className = 'toast'; }, 3000);
+    }
+
+    // --- Auth ---
+    function checkAuth() {
+        fetch(API + '?action=check').then(function(r) { return r.json(); }).then(function(d) {
+            if (d.authenticated) { showApp(); } else { showLogin(); }
+        }).catch(function() { showLogin(); });
+    }
+
+    function showLogin() { $('login-screen').hidden = false; $('admin-app').hidden = true; }
+    function showApp() { $('login-screen').hidden = true; $('admin-app').hidden = false; loadArticles(); loadGalerie(); }
+
+    $('login-btn').addEventListener('click', function() {
+        var user = $('login-user').value;
+        var pass = $('login-pass').value;
+        fetch(API + '?action=login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user: user, pass: pass })
+        }).then(function(r) {
+            if (r.ok) { showApp(); $('login-error').style.display = 'none'; }
+            else { $('login-error').style.display = 'block'; }
+        });
+    });
+
+    $('login-pass').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') $('login-btn').click();
+    });
+
+    $('logout-btn').addEventListener('click', function() {
+        fetch(API + '?action=logout').then(function() { showLogin(); });
+    });
+
+    // --- Tabs ---
+    document.querySelectorAll('.tab-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+            document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+            btn.classList.add('active');
+            $('tab-' + btn.dataset.tab).classList.add('active');
+        });
+    });
+
+    // ===========================
+    // ARTICLES
+    // ===========================
+    var editingId = null;
+
+    function loadArticles() {
+        fetch(API + '?action=articles').then(function(r) { return r.json(); }).then(function(articles) {
+            var html = '';
+            if (articles.length === 0) {
+                html = '<p style="color:var(--gray);font-size:0.9rem;">Aucun article pour le moment.</p>';
+            }
+            articles.forEach(function(a) {
+                html += '<div class="article-item">' +
+                    '<div class="article-info">' +
+                        '<h3>' + a.fr.title + '</h3>' +
+                        '<div class="meta">' + a.date + (a.eu.title ? ' &mdash; EUS: ' + a.eu.title : ' &mdash; <em>pas de traduction EUS</em>') + '</div>' +
+                    '</div>' +
+                    '<div class="article-actions">' +
+                        '<button class="btn btn-sm btn-outline" onclick="editArticle(' + a.id + ')">Modifier</button>' +
+                        '<button class="btn btn-sm btn-red" onclick="deleteArticle(' + a.id + ')">Supprimer</button>' +
+                    '</div>' +
+                '</div>';
+            });
+            $('articles-list').innerHTML = html;
+            window._articles = articles;
+        });
+    }
+
+    window.editArticle = function(id) {
+        var a = window._articles.find(function(x) { return x.id === id; });
+        if (!a) return;
+        editingId = id;
+        $('article-edit-id').value = id;
+        $('art-date').value = a.date;
+        $('art-image').value = a.image || '';
+        $('art-title-fr').value = a.fr.title;
+        $('art-summary-fr').value = a.fr.summary;
+        $('art-content-fr').value = a.fr.content;
+        $('art-title-eu').value = a.eu.title;
+        $('art-summary-eu').value = a.eu.summary;
+        $('art-content-eu').value = a.eu.content;
+        $('article-form-title').textContent = 'Modifier l\'article';
+        $('art-save-btn').textContent = 'Enregistrer';
+        $('art-cancel-btn').hidden = false;
+        $('article-form-card').scrollIntoView({ behavior: 'smooth' });
+    };
+
+    window.deleteArticle = function(id) {
+        if (!confirm('Supprimer cet article ?')) return;
+        fetch(API + '?action=article-delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: id })
+        }).then(function(r) { return r.json(); }).then(function(d) {
+            if (d.ok) { toast('Article supprime', true); loadArticles(); }
+            else { toast('Erreur : ' + (d.error || ''), false); }
+        });
+    };
+
+    $('art-cancel-btn').addEventListener('click', function() { resetArticleForm(); });
+
+    function resetArticleForm() {
+        editingId = null;
+        $('article-edit-id').value = '';
+        $('art-date').value = '';
+        $('art-image').value = '';
+        $('art-title-fr').value = '';
+        $('art-summary-fr').value = '';
+        $('art-content-fr').value = '';
+        $('art-title-eu').value = '';
+        $('art-summary-eu').value = '';
+        $('art-content-eu').value = '';
+        $('article-form-title').textContent = 'Nouvel article';
+        $('art-save-btn').textContent = 'Publier';
+        $('art-cancel-btn').hidden = true;
+    }
+
+    $('art-save-btn').addEventListener('click', function() {
+        var titleFr = $('art-title-fr').value.trim();
+        if (!titleFr) { toast('Le titre francais est obligatoire', false); return; }
+
+        var data = {
+            date: $('art-date').value || new Date().toISOString().slice(0, 10),
+            image: $('art-image').value,
+            fr: { title: titleFr, summary: $('art-summary-fr').value, content: $('art-content-fr').value },
+            eu: { title: $('art-title-eu').value, summary: $('art-summary-eu').value, content: $('art-content-eu').value }
+        };
+
+        var action = editingId ? 'article-update' : 'article-create';
+        if (editingId) data.id = editingId;
+
+        fetch(API + '?action=' + action, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        }).then(function(r) { return r.json(); }).then(function(d) {
+            if (d.ok) {
+                toast(editingId ? 'Article modifie' : 'Article publie', true);
+                resetArticleForm();
+                loadArticles();
+            } else {
+                toast('Erreur : ' + (d.error || ''), false);
+            }
+        });
+    });
+
+    // ===========================
+    // GALERIE
+    // ===========================
+    function loadGalerie() {
+        fetch(API + '?action=galerie').then(function(r) { return r.json(); }).then(function(photos) {
+            var grid = $('photo-grid');
+            if (photos.length === 0) {
+                grid.innerHTML = '<p style="color:var(--gray);font-size:0.9rem;">Aucune photo pour le moment. Ajoutez-en ci-dessus.</p>';
+                return;
+            }
+            var html = '';
+            photos.forEach(function(p) {
+                html += '<div class="photo-item">' +
+                    '<img src="/admin/uploads/' + p.filename + '" alt="' + (p.fr.label || '') + '" loading="lazy">' +
+                    '<div class="photo-label">' + (p.fr.label || p.category) + '</div>' +
+                    '<div class="photo-overlay">' +
+                        '<button class="btn btn-sm btn-red" onclick="deletePhoto(' + p.id + ')">Supprimer</button>' +
+                    '</div>' +
+                '</div>';
+            });
+            grid.innerHTML = html;
+        });
+    }
+
+    window.deletePhoto = function(id) {
+        if (!confirm('Supprimer cette photo ?')) return;
+        fetch(API + '?action=photo-delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: id })
+        }).then(function(r) { return r.json(); }).then(function(d) {
+            if (d.ok) { toast('Photo supprimee', true); loadGalerie(); }
+            else { toast('Erreur', false); }
+        });
+    };
+
+    // Upload zone
+    var uploadZone = $('upload-zone');
+    var photoInput = $('photo-input');
+
+    uploadZone.addEventListener('click', function() { photoInput.click(); });
+    uploadZone.addEventListener('dragover', function(e) { e.preventDefault(); uploadZone.classList.add('dragover'); });
+    uploadZone.addEventListener('dragleave', function() { uploadZone.classList.remove('dragover'); });
+    uploadZone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        uploadZone.classList.remove('dragover');
+        uploadFiles(e.dataTransfer.files);
+    });
+    photoInput.addEventListener('change', function() { uploadFiles(photoInput.files); photoInput.value = ''; });
+
+    function uploadFiles(files) {
+        var category = $('photo-category').value;
+        var labelFr = $('photo-label-fr').value;
+        var labelEu = $('photo-label-eu').value;
+
+        Array.from(files).forEach(function(file) {
+            var fd = new FormData();
+            fd.append('photo', file);
+            fd.append('category', category);
+            fd.append('label_fr', labelFr);
+            fd.append('label_eu', labelEu);
+
+            fetch(API + '?action=photo-upload', { method: 'POST', body: fd })
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+                if (d.ok) { toast('Photo ajoutee : ' + file.name, true); loadGalerie(); }
+                else { toast('Erreur : ' + (d.error || file.name), false); }
+            });
+        });
+    }
+
+    // --- Init ---
+    checkAuth();
+})();
+</script>
+</body>
+</html>

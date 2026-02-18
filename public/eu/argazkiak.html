@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="eu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ASJ Ezpeletaren argazki eta bideo galeria.">
+    <title>Argazkiak - ASJ Ezpeleta</title>
+    <link rel="stylesheet" href="/src/css/main.css">
+    <link rel="stylesheet" href="/src/css/responsive.css">
+    <link rel="icon" href="/src/img/logos/favicon.ico">
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-top">
+            <div class="container">
+                <div class="logo">
+                    <a href="/eu/"><img src="/src/img/logos/logo-asje.png" alt="ASJ Ezpeleta" class="logo-img"></a>
+                </div>
+                <nav class="main-nav" id="main-nav">
+                    <ul>
+                        <li><a href="/eu/">Hasiera</a></li>
+                        <li><a href="/eu/kluba.html">Kluba</a></li>
+                        <li><a href="/eu/taldeak.html">Taldeak</a></li>
+                        <li><a href="/eu/egutegia.html">Egutegia & Emaitzak</a></li>
+                        <li><a href="/eu/argazkiak.html" class="active">Argazkiak</a></li>
+                        <li><a href="/eu/bazkideak.html">Bazkideak</a></li>
+                        <li><a href="/eu/harremanetan.html">Harremanetan jarri</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions">
+                    <div class="lang-switch">
+                        <a href="/fr/galerie.html" class="lang-btn">FR</a>
+                        <span class="lang-sep">|</span>
+                        <a href="/eu/argazkiak.html" class="lang-btn active">EUS</a>
+                    </div>
+                    <button class="menu-toggle" id="menu-toggle" aria-label="Menua">
+                        <span></span><span></span><span></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="page-banner">
+        <div class="page-banner-overlay"></div>
+        <div class="container"><h1>Argazkiak</h1></div>
+    </section>
+
+    <section class="section section-galerie">
+        <div class="container">
+            <div class="galerie-filters">
+                <button class="filter-btn active" data-filter="all">Denak</button>
+                <button class="filter-btn" data-filter="matchs">Partidak</button>
+                <button class="filter-btn" data-filter="tournois">Txapelketak</button>
+                <button class="filter-btn" data-filter="evenements">Ekitaldiak</button>
+            </div>
+            <div class="galerie-grid" id="galerie-grid">
+                <div class="galerie-item" data-category="matchs">
+                    <img src="/src/img/galerie/placeholder.jpg" alt="Partidaren argazkia" loading="lazy">
+                    <div class="galerie-caption">
+                        <span class="galerie-date">2026ko otsaila</span>
+                        <span class="galerie-label">Partida adibidea</span>
+                    </div>
+                </div>
+            </div>
+            <div class="lightbox" id="lightbox" hidden>
+                <button class="lightbox-close" aria-label="Itxi">&times;</button>
+                <button class="lightbox-prev" aria-label="Aurrekoa">&#8249;</button>
+                <img src="" alt="" class="lightbox-img" id="lightbox-img">
+                <button class="lightbox-next" aria-label="Hurrengoa">&#8250;</button>
+            </div>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <img src="/src/img/logos/logo-asje.png" alt="ASJ Ezpeleta" class="footer-logo">
+                    <p>ASJ Ezpeleta<br>Jean Eizaguirre Estadioa<br>64250 Ezpeleta</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Nabigazioa</h4>
+                    <ul>
+                        <li><a href="/eu/">Hasiera</a></li>
+                        <li><a href="/eu/kluba.html">Kluba</a></li>
+                        <li><a href="/eu/taldeak.html">Taldeak</a></li>
+                        <li><a href="/eu/egutegia.html">Egutegia</a></li>
+                        <li><a href="/eu/harremanetan.html">Harremanetan jarri</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Lotura erabilgarriak</h4>
+                    <ul>
+                        <li><a href="#" target="_blank" rel="noopener">Sport Easy</a></li>
+                        <li><a href="/eu/bazkideak.html">Bazkide bihurtu</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Jarrai gaitzazu</h4>
+                    <div class="footer-social">
+                        <a href="#" target="_blank" rel="noopener">Instagram</a>
+                        <a href="#" target="_blank" rel="noopener">Facebook</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 ASJ Ezpeleta. Eskubide guztiak erreserbatuta.</p>
+            </div>
+        </div>
+    </footer>
+    <script src="/src/js/main.js"></script>
+    <script src="/src/js/content.js"></script>
+    <script src="/src/js/galerie.js"></script>
+</body>
+</html>
