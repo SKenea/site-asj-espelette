@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Galerie photos et vid&eacute;os de l'ASJ Espelette - Matchs, tournois, &eacute;v&eacute;nements.">
+    <title>Galerie - ASJ Espelette</title>
+    <link rel="stylesheet" href="/src/css/main.css">
+    <link rel="stylesheet" href="/src/css/responsive.css">
+    <link rel="icon" href="/src/img/logos/favicon.ico">
+</head>
+<body>
+    <!-- Header -->
+    <header class="site-header">
+        <div class="header-top">
+            <div class="container">
+                <div class="logo">
+                    <a href="/fr/"><img src="/src/img/logos/logo-asje.png" alt="ASJ Espelette" class="logo-img"></a>
+                </div>
+                <nav class="main-nav" id="main-nav">
+                    <ul>
+                        <li><a href="/fr/">Accueil</a></li>
+                        <li><a href="/fr/club.html">Le Club</a></li>
+                        <li><a href="/fr/equipes.html">&Eacute;quipes</a></li>
+                        <li><a href="/fr/agenda.html">Agenda & R&eacute;sultats</a></li>
+                        <li><a href="/fr/galerie.html" class="active">Galerie</a></li>
+                        <li><a href="/fr/partenaires.html">Partenaires</a></li>
+                        <li><a href="/fr/contact.html">Contact</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions">
+                    <div class="lang-switch">
+                        <a href="/fr/galerie.html" class="lang-btn active">FR</a>
+                        <span class="lang-sep">|</span>
+                        <a href="/eu/argazkiak.html" class="lang-btn">EUS</a>
+                    </div>
+                    <button class="menu-toggle" id="menu-toggle" aria-label="Menu">
+                        <span></span><span></span><span></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="page-banner">
+        <div class="page-banner-overlay"></div>
+        <div class="container">
+            <h1>Galerie</h1>
+        </div>
+    </section>
+
+    <section class="section section-galerie">
+        <div class="container">
+            <!-- Filtres par &eacute;v&eacute;nement -->
+            <div class="galerie-filters">
+                <button class="filter-btn active" data-filter="all">Tout</button>
+                <button class="filter-btn" data-filter="matchs">Matchs</button>
+                <button class="filter-btn" data-filter="tournois">Tournois</button>
+                <button class="filter-btn" data-filter="evenements">&Eacute;v&eacute;nements</button>
+            </div>
+
+            <div class="galerie-grid" id="galerie-grid">
+                <!-- Les photos/vid&eacute;os seront ajout&eacute;es via l'admin -->
+                <div class="galerie-item" data-category="matchs">
+                    <img src="/src/img/galerie/placeholder.jpg" alt="Photo match" loading="lazy">
+                    <div class="galerie-caption">
+                        <span class="galerie-date">F&eacute;vrier 2026</span>
+                        <span class="galerie-label">Match exemple</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lightbox -->
+            <div class="lightbox" id="lightbox" hidden>
+                <button class="lightbox-close" aria-label="Fermer">&times;</button>
+                <button class="lightbox-prev" aria-label="Pr&eacute;c&eacute;dent">&#8249;</button>
+                <img src="" alt="" class="lightbox-img" id="lightbox-img">
+                <button class="lightbox-next" aria-label="Suivant">&#8250;</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <img src="/src/img/logos/logo-asje.png" alt="ASJ Espelette" class="footer-logo">
+                    <p>ASJ Espelette<br>Stade Jean Eizaguirre<br>64250 Espelette</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Navigation</h4>
+                    <ul>
+                        <li><a href="/fr/">Accueil</a></li>
+                        <li><a href="/fr/club.html">Le Club</a></li>
+                        <li><a href="/fr/equipes.html">&Eacute;quipes</a></li>
+                        <li><a href="/fr/agenda.html">Agenda</a></li>
+                        <li><a href="/fr/contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Liens utiles</h4>
+                    <ul>
+                        <li><a href="#" target="_blank" rel="noopener">Sport Easy</a></li>
+                        <li><a href="/fr/partenaires.html">Devenir partenaire</a></li>
+                        <li><a href="/fr/mentions-legales.html">Mentions l&eacute;gales</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Suivez-nous</h4>
+                    <div class="footer-social">
+                        <a href="#" target="_blank" rel="noopener">Instagram</a>
+                        <a href="#" target="_blank" rel="noopener">Facebook</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 ASJ Espelette. Tous droits r&eacute;serv&eacute;s.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/src/js/main.js"></script>
+    <script src="/src/js/content.js"></script>
+    <script src="/src/js/galerie.js"></script>
+</body>
+</html>

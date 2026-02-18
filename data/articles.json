@@ -1,0 +1,17 @@
+[
+    {
+        "id": 1,
+        "date": "2026-02-16",
+        "image": "",
+        "fr": {
+            "title": "Bienvenue sur le nouveau site de l'ASJ Espelette !",
+            "summary": "Le club se dote enfin d'un site internet officiel. Retrouvez toutes les infos ici.",
+            "content": "L'ASJ Espelette est fier de vous presenter son nouveau site internet. Vous y retrouverez toute l'actualite du club, les resultats, le calendrier et bien plus encore."
+        },
+        "eu": {
+            "title": "Ongi etorri ASJ Ezpeletaren webgune berrira!",
+            "summary": "Klubak bere webgune ofiziala du orain. Informazio guztia hemen aurkituko duzu.",
+            "content": "ASJ Ezpeleta harro da bere webgune berria aurkeztuz. Hemen aurkituko duzu klubaren berri guztiak, emaitzak, egutegia eta askoz gehiago."
+        }
+    }
+]
