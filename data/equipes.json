@@ -1,0 +1,44 @@
+{
+  "saison": "2025-2026",
+  "club": {
+    "id": 8748,
+    "code": 523288,
+    "nom": "A.S.J. D'ESPELETTE",
+    "cdg": 12
+  },
+  "equipes": [
+    {
+      "key": "senior1",
+      "fff_id": "2025_8748_SEM_1",
+      "label_fr": "Senior 1",
+      "label_eu": "Senior 1",
+      "competition": true,
+      "ordre": 1
+    },
+    {
+      "key": "u13_1",
+      "fff_id": "2025_8748_U13_2",
+      "label_fr": "U13-U12 — Éq. 1",
+      "label_eu": "U13-U12 — 1. taldea",
+      "competition": true,
+      "ordre": 2
+    },
+    {
+      "key": "u13_2",
+      "fff_id": "2025_8748_U13_3",
+      "label_fr": "U13-U12 — Éq. 2",
+      "label_eu": "U13-U12 — 2. taldea",
+      "competition": true,
+      "ordre": 3
+    },
+    {
+      "key": "u13_3",
+      "fff_id": "2025_8748_U13_4",
+      "label_fr": "U13-U12 — Éq. 3",
+      "label_eu": "U13-U12 — 3. taldea",
+      "competition": true,
+      "ordre": 4
+    }
+  ],
+  "derniere_maj": "2026-04-24"
+}

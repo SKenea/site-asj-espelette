@@ -16,6 +16,10 @@
     .hero h1 {
         font-size: 2.8rem;
     }
+
+    .hero-subtitle {
+        font-size: 1.1rem;
+    }
 }
 
 /* --- Tablette portrait / Mobile large (max 768px) --- */
@@ -52,16 +56,36 @@
 
     /* Hero */
     .hero {
-        height: 50vh;
-        min-height: 300px;
+        height: auto;
+        min-height: 420px;
+        padding: var(--spacing-xxl) 0;
     }
 
     .hero h1 {
-        font-size: 2.2rem;
+        font-size: 2.4rem;
+    }
+
+    .hero-tagline {
+        font-size: 0.75rem;
+        letter-spacing: 0.2em;
+        margin-bottom: var(--spacing-md);
     }
 
     .hero-subtitle {
-        font-size: 1.1rem;
+        font-size: 1rem;
+        margin-bottom: var(--spacing-lg);
+    }
+
+    .hero-ctas {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--spacing-sm);
+        max-width: 300px;
+        margin: 0 auto;
+    }
+
+    .hero-ctas .btn {
+        width: 100%;
     }
 
     /* Page banner */
@@ -119,11 +143,20 @@
 /* --- Mobile (max 480px) --- */
 @media (max-width: 480px) {
     .hero h1 {
-        font-size: 1.8rem;
+        font-size: 1.9rem;
     }
 
     .hero-subtitle {
         font-size: 0.95rem;
+    }
+
+    .hero-tagline {
+        font-size: 0.7rem;
+    }
+
+    .btn-lg {
+        padding: var(--spacing-sm) var(--spacing-lg);
+        font-size: 0.9rem;
     }
 
     .page-banner h1 {

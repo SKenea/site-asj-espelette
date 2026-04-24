@@ -1,0 +1,148 @@
+{
+    "equipe": {
+        "id": "2025_8748_U13_3",
+        "label": "U13-U12 2"
+    },
+    "matchs": [
+        {
+            "id": 54761772,
+            "date": "2025-09-27T13:00:00+02:00",
+            "statut": "joué",
+            "joue": true,
+            "competition": "U13 NIVEAU 2",
+            "categorie": "U13 - U12",
+            "journee": "1",
+            "domicile": {
+                "nom": "HENDAYE EGLANTINS AS 3",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC514618.jpg",
+                "code": "514618",
+                "buts": 4,
+                "resultat": "GA"
+            },
+            "exterieur": {
+                "nom": "ESPELETTE 2",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC523288.jpg",
+                "code": "523288",
+                "buts": 3,
+                "resultat": "PE"
+            }
+        },
+        {
+            "id": 54761778,
+            "date": "2025-10-04T14:00:00+02:00",
+            "statut": "joué",
+            "joue": true,
+            "competition": "U13 NIVEAU 2",
+            "categorie": "U13 - U12",
+            "journee": "2",
+            "domicile": {
+                "nom": "ESPELETTE 2",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC523288.jpg",
+                "code": "523288",
+                "buts": 15,
+                "resultat": "GA"
+            },
+            "exterieur": {
+                "nom": "HIRIBURUKO AINHARA S 3",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC534716.jpg",
+                "code": "534716",
+                "buts": 0,
+                "resultat": "PE"
+            }
+        },
+        {
+            "id": 54761784,
+            "date": "2025-10-11T13:00:00+02:00",
+            "statut": "joué",
+            "joue": true,
+            "competition": "U13 NIVEAU 2",
+            "categorie": "U13 - U12",
+            "journee": "3",
+            "domicile": {
+                "nom": "ARIN LUZIEN 3",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC505608.jpg",
+                "code": "505608",
+                "buts": 4,
+                "resultat": "GA"
+            },
+            "exterieur": {
+                "nom": "ESPELETTE 2",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC523288.jpg",
+                "code": "523288",
+                "buts": 3,
+                "resultat": "PE"
+            }
+        },
+        {
+            "id": 55361245,
+            "date": "2026-04-04T13:00:00+02:00",
+            "statut": "joué",
+            "joue": true,
+            "competition": "U13 D2",
+            "categorie": "U13 - U12",
+            "journee": "6",
+            "domicile": {
+                "nom": "ARIN LUZIEN 3",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC505608.jpg",
+                "code": "505608",
+                "buts": 9,
+                "resultat": "GA"
+            },
+            "exterieur": {
+                "nom": "ESPELETTE 2",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC523288.jpg",
+                "code": "523288",
+                "buts": 1,
+                "resultat": "PE"
+            }
+        },
+        {
+            "id": 55361258,
+            "date": "2026-04-18T13:00:00+02:00",
+            "statut": "à venir",
+            "joue": false,
+            "competition": "U13 D2",
+            "categorie": "U13 - U12",
+            "journee": "10",
+            "domicile": {
+                "nom": "ESPELETTE 2",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC523288.jpg",
+                "code": "523288",
+                "buts": 0,
+                "resultat": ""
+            },
+            "exterieur": {
+                "nom": "ST PEE U.C. FOOT",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC553756.jpg",
+                "code": "553756",
+                "buts": 0,
+                "resultat": ""
+            }
+        },
+        {
+            "id": 55361250,
+            "date": "2026-04-25T13:00:00+02:00",
+            "statut": "à venir",
+            "joue": false,
+            "competition": "U13 D2",
+            "categorie": "U13 - U12",
+            "journee": "7",
+            "domicile": {
+                "nom": "ESPELETTE 2",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC523288.jpg",
+                "code": "523288",
+                "buts": 0,
+                "resultat": ""
+            },
+            "exterieur": {
+                "nom": "HIRIBURUKO AINHARA S 2",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC534716.jpg",
+                "code": "534716",
+                "buts": 0,
+                "resultat": ""
+            }
+        }
+    ],
+    "derniere_maj": "2026-04-24T13:05:32+02:00",
+    "source": "scraping"
+}

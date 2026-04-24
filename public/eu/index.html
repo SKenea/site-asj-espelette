@@ -7,7 +7,26 @@
     <title>ASJ Ezpeleta - Futbol Kluba</title>
     <link rel="stylesheet" href="/src/css/main.css">
     <link rel="stylesheet" href="/src/css/responsive.css">
-    <link rel="icon" href="/src/img/logos/favicon.ico">
+    <link rel="icon" type="image/jpeg" href="/src/img/logos/favicon.jpg">
+    <link rel="apple-touch-icon" href="/src/img/logos/logo-asje.jpg">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300;8..144,400;8..144,500;8..144,600;8..144,700;8..144,800&display=swap">
+    <meta property="og:site_name" content="ASJ Ezpeleta">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="eu_ES">
+    <meta property="og:title" content="ASJ Ezpeleta — Futbol Kluba">
+    <meta property="og:description" content="Ezpeletako futbol kluba 1968tik : taldeak, partidak, emaitzak, berriak. FR / EUS.">
+    <meta property="og:url" content="https://asj-espelette.fr/eu/">
+    <meta property="og:image" content="https://asj-espelette.fr/src/img/logos/logo-asje.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ASJ Ezpeleta — Futbol Kluba">
+    <meta name="twitter:description" content="Ezpeletako futbol kluba 1968tik : taldeak, partidak, emaitzak, berriak. FR / EUS.">
+    <meta name="twitter:image" content="https://asj-espelette.fr/src/img/logos/logo-asje.jpg">
+    <link rel="alternate" hreflang="fr" href="https://asj-espelette.fr/fr/">
+    <link rel="alternate" hreflang="eu" href="https://asj-espelette.fr/eu/">
+    <link rel="canonical" href="https://asj-espelette.fr/eu/">
 </head>
 <body>
     <!-- Header -->
@@ -16,12 +35,12 @@
             <div class="container">
                 <div class="logo">
                     <a href="/eu/">
-                        <img src="/src/img/logos/logo-asje.png" alt="ASJ Ezpeleta" class="logo-img">
+                        <img src="/src/img/logos/logo-asje.jpg" alt="ASJ Ezpeleta" class="logo-img">
                     </a>
                 </div>
                 <nav class="main-nav" id="main-nav">
                     <ul>
-                        <li><a href="/eu/" class="active">Hasiera</a></li>
+                        <li><a href="/eu/" class="active">Harrera</a></li>
                         <li><a href="/eu/kluba.html">Kluba</a></li>
                         <li><a href="/eu/taldeak.html">Taldeak</a></li>
                         <li><a href="/eu/egutegia.html">Egutegia & Emaitzak</a></li>
@@ -48,27 +67,67 @@
     <section class="hero">
         <div class="hero-overlay"></div>
         <div class="hero-content">
+            <span class="hero-tagline">1968tik &middot; Ezpeleta</span>
             <h1>ASJ Ezpeleta</h1>
-            <p class="hero-subtitle">Futbol kluba &middot; Euskal Herria</p>
+            <p class="hero-subtitle">1968tik familia-kluba &mdash; haurretatik Senior mailaraino, futbola Euskal Herriaren bihotzean.</p>
+            <div class="hero-ctas">
+                <a href="/eu/taldeak.html" class="btn btn-primary btn-lg">Gure taldeak</a>
+                <a href="/eu/harremanetan.html" class="btn btn-ghost btn-lg">Klubera sartu</a>
+            </div>
+            <div class="hero-countdown" id="hero-countdown" aria-live="polite"></div>
         </div>
+        <div class="basque-stripe" aria-hidden="true"></div>
     </section>
 
     <!-- Berriak -->
     <section class="section section-news">
         <div class="container">
             <h2 class="section-title">Azken berriak</h2>
-            <div class="news-grid" id="news-grid">
+            <div class="news-carousel is-start" data-carousel>
+                <button type="button" class="news-carousel__btn news-carousel__btn--prev" aria-label="Aurrekoa">&lsaquo;</button>
+                <button type="button" class="news-carousel__btn news-carousel__btn--next" aria-label="Hurrengoa">&rsaquo;</button>
+                <div class="news-carousel__track news-grid" id="news-grid">
                 <article class="news-card">
                     <div class="news-card-img">
                         <img src="/src/img/backgrounds/placeholder.jpg" alt="Berria">
                     </div>
                     <div class="news-card-body">
-                        <time datetime="2026-02-16">2026ko otsailaren 16a</time>
-                        <h3>Ongi etorri ASJ Ezpeletaren webgune berrira!</h3>
-                        <p>Klubak bere webgune ofiziala du orain. Informazio guztia hemen aurkituko duzu.</p>
-                        <a href="#" class="btn btn-sm">Gehiago irakurri</a>
+                        <div class="news-meta">
+                            <time datetime="2026-04-20">2026ko apirilaren 20a</time>
+                            <span class="news-category news-category-vie-club">Klubaren bizia</span>
+                        </div>
+                        <h3>Ongi etorri ASJ Ezpeletaren webgune ofizial berrira!</h3>
+                        <p>55 urte baino gehiagoko historia eta gero, klubak bere webgune ofiziala du azkenean, frantses / euskara elebiduna.</p>
                     </div>
                 </article>
+                <article class="news-card">
+                    <div class="news-card-img">
+                        <img src="/src/img/backgrounds/placeholder.jpg" alt="Txapelketa">
+                    </div>
+                    <div class="news-card-body">
+                        <div class="news-meta">
+                            <time datetime="2026-04-05">2026ko apirilaren 5a</time>
+                            <span class="news-category news-category-evenements">Ekitaldiak</span>
+                        </div>
+                        <h3>Udaberriko txapelketa U11 / U13: maiatzaren 9an</h3>
+                        <p>Udaberriko ohiko txapelketa Jean Eizaguirre estadiora itzultzen da. Dozena bat kluburik espero ditugu.</p>
+                    </div>
+                </article>
+                <article class="news-card">
+                    <div class="news-card-img">
+                        <img src="/src/img/backgrounds/placeholder.jpg" alt="Akordioa">
+                    </div>
+                    <div class="news-card-body">
+                        <div class="news-meta">
+                            <time datetime="2026-03-12">2026ko martxoaren 12a</time>
+                            <span class="news-category news-category-partenariat">Akordioa</span>
+                        </div>
+                        <h3>Akordio berria herriko okindegiarekin</h3>
+                        <p>Ezpeletako okindegia ASJ Ezpeletaren bazkideen familian sartzen da 2025-2026 denboraldirako.</p>
+                    </div>
+                </article>
+            </div>
+            <div class="news-carousel__dots" id="news-dots" aria-hidden="true"></div>
             </div>
         </div>
     </section>
@@ -107,10 +166,10 @@
                 </div>
             </div>
             <div class="social-links">
-                <a href="#" class="social-link social-link-instagram" target="_blank" rel="noopener" aria-label="Instagram">
+                <a href="https://www.instagram.com/asje.espelette/" class="social-link social-link-instagram" target="_blank" rel="noopener" aria-label="Instagram">
                     <svg viewBox="0 0 24 24" width="24" height="24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
                 </a>
-                <a href="#" class="social-link social-link-facebook" target="_blank" rel="noopener" aria-label="Facebook">
+                <a href="https://www.facebook.com/p/ASJE-Espelette-100090802673809/" class="social-link social-link-facebook" target="_blank" rel="noopener" aria-label="Facebook">
                     <svg viewBox="0 0 24 24" width="24" height="24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
                 </a>
             </div>
@@ -122,13 +181,13 @@
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-col">
-                    <img src="/src/img/logos/logo-asje.png" alt="ASJ Ezpeleta" class="footer-logo">
+                    <img src="/src/img/logos/logo-asje.jpg" alt="ASJ Ezpeleta" class="footer-logo">
                     <p>ASJ Ezpeleta<br>Jean Eizaguirre Estadioa<br>64250 Ezpeleta</p>
                 </div>
                 <div class="footer-col">
                     <h4>Nabigazioa</h4>
                     <ul>
-                        <li><a href="/eu/">Hasiera</a></li>
+                        <li><a href="/eu/">Harrera</a></li>
                         <li><a href="/eu/kluba.html">Kluba</a></li>
                         <li><a href="/eu/taldeak.html">Taldeak</a></li>
                         <li><a href="/eu/egutegia.html">Egutegia</a></li>
@@ -146,8 +205,8 @@
                 <div class="footer-col">
                     <h4>Jarrai gaitzazu</h4>
                     <div class="footer-social">
-                        <a href="#" target="_blank" rel="noopener">Instagram</a>
-                        <a href="#" target="_blank" rel="noopener">Facebook</a>
+                        <a href="https://www.instagram.com/asje.espelette/" target="_blank" rel="noopener">Instagram</a>
+                        <a href="https://www.facebook.com/p/ASJE-Espelette-100090802673809/" target="_blank" rel="noopener">Facebook</a>
                     </div>
                 </div>
             </div>
@@ -156,6 +215,11 @@
             </div>
         </div>
     </footer>
+
+    <a href="/eu/harremanetan.html" class="md-fab" aria-label="Klubera sartu">
+        <span class="md-fab__icon" aria-hidden="true">⚽</span>
+        <span class="md-fab__label">Klubera sartu</span>
+    </a>
 
     <script src="/src/js/main.js"></script>
     <script src="/src/js/content.js"></script>

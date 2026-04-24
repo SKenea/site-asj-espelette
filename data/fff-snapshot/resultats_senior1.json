@@ -1,0 +1,217 @@
+{
+    "equipe": {
+        "id": "2025_8748_SEM_1",
+        "label": "Senior 1"
+    },
+    "matchs": [
+        {
+            "id": 54033041,
+            "date": "2025-09-07T15:00:00+02:00",
+            "statut": "joué",
+            "joue": true,
+            "competition": "SENIORS DEPARTEMENTAL 3",
+            "categorie": "Senior",
+            "journee": "1",
+            "domicile": {
+                "nom": "KAMBOKO IZARRA",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC505766.jpg",
+                "code": "505766",
+                "buts": 1,
+                "resultat": "NU"
+            },
+            "exterieur": {
+                "nom": "ESPELETTE",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC523288.jpg",
+                "code": "523288",
+                "buts": 1,
+                "resultat": "NU"
+            }
+        },
+        {
+            "id": 54033050,
+            "date": "2025-09-21T15:00:00+02:00",
+            "statut": "joué",
+            "joue": true,
+            "competition": "SENIORS DEPARTEMENTAL 3",
+            "categorie": "Senior",
+            "journee": "2",
+            "domicile": {
+                "nom": "ESPELETTE",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC523288.jpg",
+                "code": "523288",
+                "buts": 0,
+                "resultat": "PE"
+            },
+            "exterieur": {
+                "nom": "BAIONA FC 2",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC581721.jpg",
+                "code": "581721",
+                "buts": 1,
+                "resultat": "GA"
+            }
+        },
+        {
+            "id": 54061178,
+            "date": "2025-09-28T15:00:00+02:00",
+            "statut": "joué",
+            "joue": true,
+            "competition": "COUPE DARGAINS",
+            "categorie": "Senior",
+            "journee": "1",
+            "domicile": {
+                "nom": "CIBOURE FC",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC535300.jpg",
+                "code": "535300",
+                "buts": 2,
+                "resultat": "GA"
+            },
+            "exterieur": {
+                "nom": "ESPELETTE",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC523288.jpg",
+                "code": "523288",
+                "buts": 1,
+                "resultat": "PE"
+            }
+        },
+        {
+            "id": 54033055,
+            "date": "2025-10-04T20:00:00+02:00",
+            "statut": "joué",
+            "joue": true,
+            "competition": "SENIORS DEPARTEMENTAL 3",
+            "categorie": "Senior",
+            "journee": "3",
+            "domicile": {
+                "nom": "USTARITZ LABOURDINS 2",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC523568.jpg",
+                "code": "523568",
+                "buts": 2,
+                "resultat": "GA"
+            },
+            "exterieur": {
+                "nom": "ESPELETTE",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC523288.jpg",
+                "code": "523288",
+                "buts": 0,
+                "resultat": "PE"
+            }
+        },
+        {
+            "id": 54033061,
+            "date": "2025-10-19T15:00:00+02:00",
+            "statut": "joué",
+            "joue": true,
+            "competition": "SENIORS DEPARTEMENTAL 3",
+            "categorie": "Senior",
+            "journee": "4",
+            "domicile": {
+                "nom": "ESPELETTE",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC523288.jpg",
+                "code": "523288",
+                "buts": 3,
+                "resultat": "GA"
+            },
+            "exterieur": {
+                "nom": "HASPARREN FC 3",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC524058.jpg",
+                "code": "524058",
+                "buts": 0,
+                "resultat": "PE"
+            }
+        },
+        {
+            "id": 54033068,
+            "date": "2025-10-25T20:00:00+02:00",
+            "statut": "joué",
+            "joue": true,
+            "competition": "SENIORS DEPARTEMENTAL 3",
+            "categorie": "Senior",
+            "journee": "5",
+            "domicile": {
+                "nom": "BAYONNE CROISES 3",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC514041.jpg",
+                "code": "514041",
+                "buts": 1,
+                "resultat": "PE"
+            },
+            "exterieur": {
+                "nom": "ESPELETTE",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC523288.jpg",
+                "code": "523288",
+                "buts": 2,
+                "resultat": "GA"
+            }
+        },
+        {
+            "id": 54033152,
+            "date": "2026-04-04T15:30:00+02:00",
+            "statut": "joué",
+            "joue": true,
+            "competition": "SENIORS DEPARTEMENTAL 3",
+            "categorie": "Senior",
+            "journee": "19",
+            "domicile": {
+                "nom": "ESPELETTE",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC523288.jpg",
+                "code": "523288",
+                "buts": 3,
+                "resultat": "GA"
+            },
+            "exterieur": {
+                "nom": "NAVARRENX",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC518821.jpg",
+                "code": "518821",
+                "buts": 1,
+                "resultat": "PE"
+            }
+        },
+        {
+            "id": 54033143,
+            "date": "2026-04-11T19:00:00+02:00",
+            "statut": "joué",
+            "joue": true,
+            "competition": "SENIORS DEPARTEMENTAL 3",
+            "categorie": "Senior",
+            "journee": "18",
+            "domicile": {
+                "nom": "BIDACHE",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC537722.jpg",
+                "code": "537722",
+                "buts": 3,
+                "resultat": "GA"
+            },
+            "exterieur": {
+                "nom": "ESPELETTE",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC523288.jpg",
+                "code": "523288",
+                "buts": 1,
+                "resultat": "PE"
+            }
+        },
+        {
+            "id": 54033155,
+            "date": "2026-04-26T15:00:00+02:00",
+            "statut": "à venir",
+            "joue": false,
+            "competition": "SENIORS DEPARTEMENTAL 3",
+            "categorie": "Senior",
+            "journee": "20",
+            "domicile": {
+                "nom": "ESPELETTE",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC523288.jpg",
+                "code": "523288",
+                "buts": 0,
+                "resultat": ""
+            },
+            "exterieur": {
+                "nom": "ST PALAIS 64 US 2",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC531930.jpg",
+                "code": "531930",
+                "buts": 0,
+                "resultat": ""
+            }
+        }
+    ],
+    "derniere_maj": "2026-04-24T13:04:07+02:00",
+    "source": "scraping"
+}

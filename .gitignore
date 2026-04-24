@@ -23,3 +23,23 @@ build/
 
 # Claude
 .claude/
+
+# Dev local — outils portables (ne pas committer)
+tools/php/
+tools/*.zip
+router.php.log
+dev-server.py
+.dev-server.log
+
+# Playwright (tests locaux)
+.playwright-mcp/
+
+# Screenshots de debug/test à la racine
+/*.png
+/*.jpg.tmp
+
+# Cache FFF (régénéré automatiquement par admin/fff-proxy.php)
+data/cache/
+
+# PHP
+*.php.bak

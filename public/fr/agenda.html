@@ -7,7 +7,26 @@
     <title>Agenda & R&eacute;sultats - ASJ Espelette</title>
     <link rel="stylesheet" href="/src/css/main.css">
     <link rel="stylesheet" href="/src/css/responsive.css">
-    <link rel="icon" href="/src/img/logos/favicon.ico">
+    <link rel="icon" type="image/jpeg" href="/src/img/logos/favicon.jpg">
+    <link rel="apple-touch-icon" href="/src/img/logos/logo-asje.jpg">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300;8..144,400;8..144,500;8..144,600;8..144,700;8..144,800&display=swap">
+    <meta property="og:site_name" content="ASJ Espelette">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="fr_FR">
+    <meta property="og:title" content="Agenda & Résultats — ASJ Espelette">
+    <meta property="og:description" content="Calendrier, résultats et classements de toutes les équipes ASJ Espelette en direct de la FFF.">
+    <meta property="og:url" content="https://asj-espelette.fr/fr/agenda.html">
+    <meta property="og:image" content="https://asj-espelette.fr/src/img/logos/logo-asje.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Agenda & Résultats — ASJ Espelette">
+    <meta name="twitter:description" content="Calendrier, résultats et classements de toutes les équipes ASJ Espelette en direct de la FFF.">
+    <meta name="twitter:image" content="https://asj-espelette.fr/src/img/logos/logo-asje.jpg">
+    <link rel="alternate" hreflang="eu" href="https://asj-espelette.fr/eu/egutegia.html">
+    <link rel="alternate" hreflang="fr" href="https://asj-espelette.fr/fr/agenda.html">
+    <link rel="canonical" href="https://asj-espelette.fr/fr/agenda.html">
 </head>
 <body>
     <!-- Header -->
@@ -15,7 +34,7 @@
         <div class="header-top">
             <div class="container">
                 <div class="logo">
-                    <a href="/fr/"><img src="/src/img/logos/logo-asje.png" alt="ASJ Espelette" class="logo-img"></a>
+                    <a href="/fr/"><img src="/src/img/logos/logo-asje.jpg" alt="ASJ Espelette" class="logo-img"></a>
                 </div>
                 <nav class="main-nav" id="main-nav">
                     <ul>
@@ -49,26 +68,40 @@
         </div>
     </section>
 
-    <section class="section section-agenda">
+    <section class="section section-agenda" id="agenda-app">
         <div class="container">
-            <h2 class="section-title">Calendrier et r&eacute;sultats FFF</h2>
-            <p class="section-intro">Retrouvez ci-dessous le calendrier, les r&eacute;sultats et les classements de toutes nos &eacute;quipes, directement depuis la F&eacute;d&eacute;ration Fran&ccedil;aise de Football.</p>
-            <div class="fff-equipe-filter">
-                <label for="fff-equipe-select">&Eacute;quipe :</label>
-                <select id="fff-equipe-select">
-                    <option value="senior1">Senior 1</option>
-                    <option value="u13_1">U13-U12 1</option>
-                    <option value="u13_2">U13-U12 2</option>
-                    <option value="u13_3">U13-U12 3</option>
-                </select>
-            </div>
-            <div id="fff-calendrier">
-                <p class="placeholder-text">Chargement des r&eacute;sultats et du calendrier...</p>
+            <p class="section-intro">Toutes les donn&eacute;es sont synchronis&eacute;es automatiquement avec la F&eacute;d&eacute;ration Fran&ccedil;aise de Football.</p>
+
+            <!-- Hero prochain match -->
+            <div id="fff-hero" class="fff-hero fff-hero--empty" aria-live="polite">
+                <div class="fff-loading">Chargement&hellip;</div>
             </div>
 
-            <h2 class="section-title" style="margin-top:2rem;">Planning (toutes cat&eacute;gories)</h2>
-            <div id="fff-planning">
-                <p class="placeholder-text">Chargement du planning...</p>
+            <!-- Chips équipes -->
+            <nav class="fff-equipe-filter" id="fff-equipe-tabs" role="tablist" aria-label="S&eacute;lection de l'&eacute;quipe"></nav>
+
+            <!-- Sous-tabs Précédent / Ce week-end / Suivant -->
+            <nav class="view-tabs view-tabs--compact" id="fff-subview-tabs" role="tablist" aria-label="P&eacute;riode">
+                <button type="button" class="view-tab" data-view="previous" role="tab">
+                    <span class="view-tab__label">Pr&eacute;c&eacute;dent</span>
+                </button>
+                <button type="button" class="view-tab is-active" data-view="weekend" role="tab">
+                    <span class="view-tab__label">Ce week-end</span>
+                </button>
+                <button type="button" class="view-tab" data-view="next" role="tab">
+                    <span class="view-tab__label">Suivant</span>
+                </button>
+            </nav>
+
+            <div id="fff-bilan-host" aria-live="polite"></div>
+
+            <div class="agenda-two-col">
+                <div id="fff-agenda-list">
+                    <div class="fff-loading">Chargement&hellip;</div>
+                </div>
+                <div id="fff-classement">
+                    <div class="fff-loading">Chargement&hellip;</div>
+                </div>
             </div>
         </div>
     </section>
@@ -78,7 +111,7 @@
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-col">
-                    <img src="/src/img/logos/logo-asje.png" alt="ASJ Espelette" class="footer-logo">
+                    <img src="/src/img/logos/logo-asje.jpg" alt="ASJ Espelette" class="footer-logo">
                     <p>ASJ Espelette<br>Stade Jean Eizaguirre<br>64250 Espelette</p>
                 </div>
                 <div class="footer-col">
@@ -102,8 +135,8 @@
                 <div class="footer-col">
                     <h4>Suivez-nous</h4>
                     <div class="footer-social">
-                        <a href="#" target="_blank" rel="noopener">Instagram</a>
-                        <a href="#" target="_blank" rel="noopener">Facebook</a>
+                        <a href="https://www.instagram.com/asje.espelette/" target="_blank" rel="noopener">Instagram</a>
+                        <a href="https://www.facebook.com/p/ASJE-Espelette-100090802673809/" target="_blank" rel="noopener">Facebook</a>
                     </div>
                 </div>
             </div>

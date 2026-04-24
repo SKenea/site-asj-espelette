@@ -49,6 +49,13 @@ function sanitize($str) {
     return htmlspecialchars(trim($str), ENT_QUOTES, 'UTF-8');
 }
 
+const ARTICLE_CATEGORIES = ['vie-club', 'evenements', 'partenariat'];
+
+function sanitizeCategory($cat) {
+    $cat = is_string($cat) ? trim($cat) : '';
+    return in_array($cat, ARTICLE_CATEGORIES, true) ? $cat : 'vie-club';
+}
+
 // --- Routage ---
 $method = $_SERVER['REQUEST_METHOD'];
 $action = $_GET['action'] ?? '';
@@ -106,6 +113,7 @@ if ($action === 'article-create' && $method === 'POST') {
     $article = [
         'id' => $maxId + 1,
         'date' => sanitize($input['date'] ?? date('Y-m-d')),
+        'category' => sanitizeCategory($input['category'] ?? 'vie-club'),
         'image' => sanitize($input['image'] ?? ''),
         'fr' => [
             'title' => sanitize($input['fr']['title'] ?? ''),
@@ -135,6 +143,7 @@ if ($action === 'article-update' && $method === 'POST') {
     foreach ($articles as &$a) {
         if ($a['id'] === $id) {
             if (isset($input['date'])) $a['date'] = sanitize($input['date']);
+            if (isset($input['category'])) $a['category'] = sanitizeCategory($input['category']);
             if (isset($input['image'])) $a['image'] = sanitize($input['image']);
             if (isset($input['fr'])) {
                 $a['fr']['title'] = sanitize($input['fr']['title'] ?? $a['fr']['title']);
@@ -267,6 +276,85 @@ if ($action === 'photo-delete' && $method === 'POST') {
     }));
     writeJson('galerie.json', $galerie);
     echo json_encode(['ok' => true]);
+    exit;
+}
+
+// ===========================
+// EQUIPES (configuration FFF)
+// ===========================
+
+// GET equipes (public — le front a besoin des labels FR/EU)
+if ($action === 'equipes' && $method === 'GET') {
+    echo json_encode(readJson('equipes.json'));
+    exit;
+}
+
+// POST equipes-save (remplacement complet du fichier — auth requise)
+if ($action === 'equipes-save' && $method === 'POST') {
+    requireAuth();
+    $input = json_decode(file_get_contents('php://input'), true);
+    if (!is_array($input) || !isset($input['equipes']) || !is_array($input['equipes'])) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Payload invalide (attendu: { saison, club, equipes[] })']);
+        exit;
+    }
+
+    // Validation des équipes : key unique, fff_id non vide, label_fr non vide
+    $seenKeys = [];
+    $cleaned = [];
+    foreach ($input['equipes'] as $i => $eq) {
+        $key = trim($eq['key'] ?? '');
+        if (!$key || !preg_match('/^[a-z0-9_]+$/i', $key)) {
+            http_response_code(400);
+            echo json_encode(['error' => "Clé d'équipe invalide ligne " . ($i+1) . " (caractères autorisés: a-z, 0-9, _)"]);
+            exit;
+        }
+        if (isset($seenKeys[$key])) {
+            http_response_code(400);
+            echo json_encode(['error' => "Clé '{$key}' en doublon"]);
+            exit;
+        }
+        $seenKeys[$key] = true;
+
+        $fffId = trim($eq['fff_id'] ?? '');
+        if (!$fffId) {
+            http_response_code(400);
+            echo json_encode(['error' => "ID FFF manquant pour '{$key}'"]);
+            exit;
+        }
+
+        $cleaned[] = [
+            'key' => $key,
+            'fff_id' => $fffId,
+            'label_fr' => sanitize($eq['label_fr'] ?? $key),
+            'label_eu' => sanitize($eq['label_eu'] ?? $eq['label_fr'] ?? $key),
+            'competition' => !empty($eq['competition']),
+            'ordre' => intval($eq['ordre'] ?? ($i + 1)),
+        ];
+    }
+
+    $config = [
+        'saison' => sanitize($input['saison'] ?? date('Y') . '-' . (date('Y')+1)),
+        'club' => [
+            'id' => intval($input['club']['id'] ?? 8748),
+            'code' => intval($input['club']['code'] ?? 523288),
+            'nom' => sanitize($input['club']['nom'] ?? 'A.S.J. D\'ESPELETTE'),
+            'cdg' => intval($input['club']['cdg'] ?? 12),
+        ],
+        'equipes' => $cleaned,
+        'derniere_maj' => date('Y-m-d'),
+    ];
+
+    writeJson('equipes.json', $config);
+
+    // Invalider le cache FFF lié aux équipes (classement + resultats)
+    $cacheDir = DATA_DIR . 'cache/';
+    if (is_dir($cacheDir)) {
+        foreach (glob($cacheDir . 'classement_*.json') as $f) @unlink($f);
+        foreach (glob($cacheDir . 'resultats_*.json') as $f) @unlink($f);
+    }
+
+    echo json_encode(['ok' => true, 'config' => $config]);
     exit;
 }
 

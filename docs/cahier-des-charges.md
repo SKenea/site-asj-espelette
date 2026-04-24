@@ -34,7 +34,7 @@ L'ASJ Espelette (club n FFF 523288, District Pyrenees-Atlantiques, Ligue Nouvell
 ### Pages EUS (`/eu/`)
 | Page | Fichier |
 |------|---------|
-| Hasiera | `index.html` |
+| Harrera | `index.html` |
 | Kluba | `kluba.html` |
 | Taldeak | `taldeak.html` |
 | Egutegia | `egutegia.html` |

@@ -7,6 +7,18 @@
     var API = '/admin/api.php';
     var lang = document.documentElement.lang === 'eu' ? 'eu' : 'fr';
 
+    var CATEGORY_LABELS = {
+        'vie-club':    { fr: 'Vie du club',   eu: 'Klubaren bizia' },
+        'evenements':  { fr: 'Ev&eacute;nements',   eu: 'Ekitaldiak' },
+        'partenariat': { fr: 'Partenariat',   eu: 'Akordioa' }
+    };
+
+    function renderCategory(catKey) {
+        if (!catKey || !CATEGORY_LABELS[catKey]) return '';
+        var label = CATEGORY_LABELS[catKey][lang] || CATEGORY_LABELS[catKey].fr;
+        return '<span class="news-category news-category-' + catKey + '">' + label + '</span>';
+    }
+
     // --- Articles (page accueil) ---
     var newsGrid = document.getElementById('news-grid');
     if (newsGrid) {
@@ -15,8 +27,8 @@
             .then(function (articles) {
                 if (!articles || articles.length === 0) return;
                 var html = '';
-                // Afficher les 6 derniers articles
-                articles.slice(0, 6).forEach(function (a) {
+                // Afficher les 5 derniers articles
+                articles.slice(0, 5).forEach(function (a) {
                     var t = a[lang] || a.fr;
                     var imgSrc = a.image
                         ? (a.image.startsWith('http') ? a.image : '/admin/uploads/' + a.image)
@@ -28,7 +40,10 @@
                             '<img src="' + imgSrc + '" alt="' + escHtml(t.title) + '" loading="lazy">' +
                         '</div>' +
                         '<div class="news-card-body">' +
-                            '<time datetime="' + a.date + '">' + dateStr + '</time>' +
+                            '<div class="news-meta">' +
+                                '<time datetime="' + a.date + '">' + dateStr + '</time>' +
+                                renderCategory(a.category) +
+                            '</div>' +
                             '<h3>' + escHtml(t.title) + '</h3>' +
                             '<p>' + escHtml(t.summary || '') + '</p>' +
                         '</div>' +
