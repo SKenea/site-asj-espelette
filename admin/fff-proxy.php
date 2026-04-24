@@ -10,22 +10,51 @@
 
 define('CACHE_DIR', __DIR__ . '/../data/cache/');
 define('CACHE_TTL', 6 * 3600); // 6 heures
-define('FFF_CLUB_ID', 8748);
-define('FFF_CLUB_CODE', 523288);
-define('FFF_CDG', 12); // District Pyrenees Atlantiques
+define('EQUIPES_CONFIG', __DIR__ . '/../data/equipes.json');
 define('FFF_BASE', 'https://epreuves.fff.fr');
 define('FFF_TOKEN_PATH', 'QpUOBjjSJN'); // Chemin statique pour le token
 
-// IDs des equipes en competition (saison en cours)
-// Format: saison_clubId_categorie_eqNo
-// ATTENTION: les eqNo ne commencent pas forcement a 1 pour chaque categorie
-// IDs verifies via l'API FFF le 17/02/2026
-define('FFF_EQUIPES', [
-    'senior1' => ['id' => '2025_8748_SEM_1', 'label' => 'Senior 1'],
-    'u13_1'   => ['id' => '2025_8748_U13_2', 'label' => 'U13-U12 1'],
-    'u13_2'   => ['id' => '2025_8748_U13_3', 'label' => 'U13-U12 2'],
-    'u13_3'   => ['id' => '2025_8748_U13_4', 'label' => 'U13-U12 3'],
-]);
+/**
+ * Charge la config equipes/club depuis data/equipes.json
+ * et retourne un dict indexe par key pour compat avec l'ancien format FFF_EQUIPES.
+ */
+function loadEquipesConfig() {
+    static $cfg = null;
+    if ($cfg !== null) return $cfg;
+    if (!file_exists(EQUIPES_CONFIG)) {
+        $cfg = ['club' => [], 'equipes' => []];
+        return $cfg;
+    }
+    $raw = json_decode(file_get_contents(EQUIPES_CONFIG), true);
+    if (!$raw) {
+        $cfg = ['club' => [], 'equipes' => []];
+        return $cfg;
+    }
+    // Indexe les equipes par key et trie par ordre
+    $indexed = [];
+    $list = $raw['equipes'] ?? [];
+    usort($list, function ($a, $b) { return ($a['ordre'] ?? 99) - ($b['ordre'] ?? 99); });
+    foreach ($list as $eq) {
+        $indexed[$eq['key']] = [
+            'id' => $eq['fff_id'],
+            'label' => $eq['label_fr'],
+            'label_eu' => $eq['label_eu'] ?? $eq['label_fr'],
+            'key' => $eq['key'],
+            'competition' => $eq['competition'] ?? true,
+        ];
+    }
+    $cfg = [
+        'club' => $raw['club'] ?? [],
+        'equipes' => $indexed,
+        'saison' => $raw['saison'] ?? '',
+    ];
+    return $cfg;
+}
+
+function getClubId()   { $c = loadEquipesConfig(); return $c['club']['id'] ?? 8748; }
+function getClubCode() { $c = loadEquipesConfig(); return $c['club']['code'] ?? 523288; }
+function getClubCdg()  { $c = loadEquipesConfig(); return $c['club']['cdg'] ?? 12; }
+function getEquipes()  { $c = loadEquipesConfig(); return $c['equipes']; }
 
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
@@ -53,7 +82,7 @@ if ($action === 'calendrier') {
         exit;
     }
 
-    $url = FFF_BASE . "/api/fal/cdg/" . FFF_CDG . "/club/" . FFF_CLUB_ID
+    $url = FFF_BASE . "/api/fal/cdg/" . getClubCdg() . "/club/" . getClubId()
          . "/sites?dateDebut={$debut}&dateFin={$fin}";
 
     $data = fetchUrl($url);
@@ -76,13 +105,14 @@ if ($action === 'calendrier') {
 // --- RESULTATS (API data/matches avec token de securite) ---
 if ($action === 'resultats') {
     $equipe = $_GET['equipe'] ?? 'senior1';
-    if (!isset(FFF_EQUIPES[$equipe])) {
+    $equipes = getEquipes();
+    if (!isset($equipes[$equipe])) {
         http_response_code(400);
-        echo json_encode(['error' => 'Equipe inconnue. Disponibles: ' . implode(', ', array_keys(FFF_EQUIPES))]);
+        echo json_encode(['error' => 'Equipe inconnue. Disponibles: ' . implode(', ', array_keys($equipes))]);
         exit;
     }
 
-    $equipeId = FFF_EQUIPES[$equipe]['id'];
+    $equipeId = $equipes[$equipe]['id'];
     $cacheFile = CACHE_DIR . "resultats_{$equipe}.json";
 
     if (file_exists($cacheFile) && (time() - filemtime($cacheFile)) < CACHE_TTL) {
@@ -105,7 +135,7 @@ if ($action === 'resultats') {
         if ($parsed && isset($parsed['hydra:member'])) {
             $matchs = formatMatchesList($parsed['hydra:member']);
             $result = [
-                'equipe' => FFF_EQUIPES[$equipe],
+                'equipe' => $equipes[$equipe],
                 'matchs' => $matchs,
                 'derniere_maj' => date('c'),
             ];
@@ -143,7 +173,7 @@ if ($action === 'tous-resultats') {
     $debut = '2025-08-01T00:00:00+00:00';
     $fin = '2026-07-01T00:00:00+00:00';
 
-    $url = FFF_BASE . "/api/data/matches?clNo=" . FFF_CLUB_ID
+    $url = FFF_BASE . "/api/data/matches?clNo=" . getClubId()
          . "&dateDebut=" . urlencode($debut)
          . "&dateFin=" . urlencode($fin)
          . "&itemsPerPage=100&pagination=true";
@@ -184,7 +214,7 @@ if ($action === 'prochains-matchs') {
     $debut = date('Y-m-d');
     $fin = date('Y-m-d', strtotime('+3 months'));
 
-    $url = FFF_BASE . "/api/fal/cdg/" . FFF_CDG . "/club/" . FFF_CLUB_ID
+    $url = FFF_BASE . "/api/fal/cdg/" . getClubCdg() . "/club/" . getClubId()
          . "/sites?dateDebut={$debut}&dateFin={$fin}";
 
     $data = fetchUrl($url);
@@ -204,15 +234,60 @@ if ($action === 'prochains-matchs') {
     exit;
 }
 
+// --- CLASSEMENT (scraping SSR — tableau dans le HTML, pas besoin de token) ---
+if ($action === 'classement') {
+    $equipe = $_GET['equipe'] ?? 'senior1';
+    $equipes = getEquipes();
+    if (!isset($equipes[$equipe])) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Equipe inconnue. Disponibles: ' . implode(', ', array_keys($equipes))]);
+        exit;
+    }
+
+    $equipeId = $equipes[$equipe]['id'];
+    $cacheFile = CACHE_DIR . "classement_{$equipe}.json";
+
+    if (file_exists($cacheFile) && (time() - filemtime($cacheFile)) < CACHE_TTL) {
+        echo file_get_contents($cacheFile);
+        exit;
+    }
+
+    $url = FFF_BASE . "/competition/club/" . getClubCode() . "-espelette/equipe/"
+         . rawurlencode($equipeId) . "/classement";
+
+    $html = fetchUrl($url);
+    if ($html) {
+        $rows = scrapeClassementHtml($html);
+        if (!empty($rows)) {
+            $result = [
+                'equipe' => $equipes[$equipe],
+                'rows' => $rows,
+                'derniere_maj' => date('c'),
+                'source' => 'scraping',
+            ];
+            $json = json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+            file_put_contents($cacheFile, $json);
+            echo $json;
+            exit;
+        }
+    }
+
+    http_response_code(502);
+    echo json_encode(['error' => 'Impossible de recuperer le classement FFF']);
+    exit;
+}
+
 // --- Fallback ---
+$_equipes_keys = array_keys(getEquipes());
 echo json_encode([
     'endpoints' => [
         'calendrier' => '?action=calendrier[&mois_avant=0&mois_apres=2]',
-        'resultats' => '?action=resultats&equipe=senior1|u13_1|u13_2|u13_3',
+        'resultats' => '?action=resultats&equipe=' . implode('|', $_equipes_keys),
         'tous-resultats' => '?action=tous-resultats',
         'prochains-matchs' => '?action=prochains-matchs[&limit=5]',
+        'classement' => '?action=classement&equipe=' . implode('|', $_equipes_keys),
     ],
-    'equipes' => FFF_EQUIPES,
+    'equipes' => getEquipes(),
 ]);
 
 
@@ -293,7 +368,7 @@ function fetchFFFApi($url) {
 // ========================================
 
 function fallbackScrapeResultats($equipe, $equipeId) {
-    $url = FFF_BASE . "/competition/club/" . FFF_CLUB_CODE
+    $url = FFF_BASE . "/competition/club/" . getClubCode()
          . "-espelette/equipe/{$equipeId}/resultat-calendrier";
 
     $html = fetchUrl($url);
@@ -325,8 +400,9 @@ function fallbackScrapeResultats($equipe, $equipeId) {
         return strcmp($a['date'] ?? '', $b['date'] ?? '');
     });
 
+    $equipes = getEquipes();
     return [
-        'equipe' => FFF_EQUIPES[$equipe],
+        'equipe' => $equipes[$equipe] ?? ['key' => $equipe, 'id' => $equipeId],
         'matchs' => array_values($unique),
         'derniere_maj' => date('c'),
         'source' => 'scraping',
@@ -394,7 +470,7 @@ function formatCalendrier($data) {
         'club' => [
             'nom' => $data['clNom'] ?? 'A.S.J. D\'ESPELETTE',
             'logo' => $data['logo'] ?? '',
-            'code' => $data['clCod'] ?? FFF_CLUB_CODE,
+            'code' => $data['clCod'] ?? getClubCode(),
         ],
         'epreuves' => [],
         'sites' => [],
@@ -484,4 +560,83 @@ function formatProchainsSites($data, $limit) {
         'prochains_matchs' => array_slice($upcoming, 0, $limit),
         'derniere_maj' => date('c'),
     ];
+}
+
+/**
+ * Parse le tableau de classement rendu en HTML par la FFF.
+ * Le tableau suit l'ordre : Pos | (decision) | Equipe | Pts | J | G | N | P | F | P/Bo | Bp | Bc | Diff
+ */
+function scrapeClassementHtml($html) {
+    if (!preg_match_all('/<tr[^>]*>(.*?)<\/tr>/s', $html, $matches)) return [];
+
+    $rows = [];
+    foreach ($matches[1] as $trHtml) {
+        // Extraire logo (si <img src=...>) avant de cleaner
+        $logo = null;
+        if (preg_match('/<img[^>]+src="([^"]+)"/i', $trHtml, $logoM)) {
+            $logo = $logoM[1];
+        }
+
+        // Clean tags et normaliser espaces
+        $text = preg_replace('/<[^>]+>/', ' ', $trHtml);
+        $text = preg_replace('/\s+/', ' ', html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+        $text = trim($text);
+
+        // Exclure la ligne d'en-tete
+        if (stripos($text, 'Pts') !== false && stripos($text, 'Diff') !== false) continue;
+        if (strlen($text) < 10) continue;
+
+        // Regex : position au debut, puis optionnellement un chiffre de decision, puis nom, puis 9 ou 10 nombres
+        // On capture position + reste
+        if (!preg_match('/^(\d+)\s+(.+)$/', $text, $m)) continue;
+        $position = intval($m[1]);
+        $reste = $m[2];
+
+        // Extraire les 9 derniers nombres (Pts, J, G, N, P, F, P/Bo, Bp, Bc, Diff)
+        // On cherche les nombres en fin de chaine
+        if (!preg_match('/^(.+?)\s+(-?\d+)\s+(-?\d+)\s+(-?\d+)\s+(-?\d+)\s+(-?\d+)\s+(-?\d+)\s+(-?\d+)\s+(-?\d+)\s+(-?\d+)\s+(-?\d+)$/', $reste, $n)) {
+            // Essai avec 9 nombres (sans P/Bo)
+            if (!preg_match('/^(.+?)\s+(-?\d+)\s+(-?\d+)\s+(-?\d+)\s+(-?\d+)\s+(-?\d+)\s+(-?\d+)\s+(-?\d+)\s+(-?\d+)\s+(-?\d+)$/', $reste, $n)) {
+                continue;
+            }
+            $nom = trim($n[1]);
+            $pts = intval($n[2]); $joues = intval($n[3]);
+            $g = intval($n[4]); $nl = intval($n[5]); $p = intval($n[6]);
+            $f = intval($n[7]);
+            $bp = intval($n[8]); $bc = intval($n[9]); $diff = intval($n[10]);
+            $pbo = null;
+        } else {
+            $nom = trim($n[1]);
+            $pts = intval($n[2]); $joues = intval($n[3]);
+            $g = intval($n[4]); $nl = intval($n[5]); $p = intval($n[6]);
+            $f = intval($n[7]); $pbo = intval($n[8]);
+            $bp = intval($n[9]); $bc = intval($n[10]); $diff = intval($n[11]);
+        }
+
+        // Certains rangs ont un chiffre de decision inséré entre position et nom (ex: "9 1 ST PALAIS")
+        // On détecte : si le nom commence par un seul chiffre + espace suivi de lettres
+        if (preg_match('/^(\d+)\s+([A-ZÀ-ÿ].*)$/u', $nom, $nn)) {
+            $nom = trim($nn[2]);
+        }
+
+        $rows[] = [
+            'position' => $position,
+            'club' => [
+                'nom' => $nom,
+                'logo' => $logo,
+            ],
+            'points' => $pts,
+            'joues' => $joues,
+            'gagnes' => $g,
+            'nuls' => $nl,
+            'perdus' => $p,
+            'forfaits' => $f,
+            'buts_pour' => $bp,
+            'buts_contre' => $bc,
+            'difference' => $diff,
+        ];
+    }
+
+    usort($rows, function ($a, $b) { return $a['position'] - $b['position']; });
+    return $rows;
 }

@@ -1,0 +1,42 @@
+{
+    "prochains_matchs": [
+        {
+            "date": "2026-04-25T09:00:00+02:00",
+            "organisateur": "LES LABOURDINS D'USTARITZ",
+            "terrain": {
+                "nom": "",
+                "adresse": [
+                    "141 CHEMIN ETXEPAREA",
+                    "64480 USTARITZ"
+                ]
+            },
+            "equipes": []
+        },
+        {
+            "date": "2026-04-25T10:00:00+02:00",
+            "organisateur": "LES GENETS D'ANGLET FOOTBALL",
+            "terrain": {
+                "nom": "",
+                "adresse": [
+                    "29 RUE de HAUSQUETTE",
+                    "64600 ANGLET"
+                ]
+            },
+            "equipes": []
+        },
+        {
+            "date": "2026-04-25T10:00:00+02:00",
+            "organisateur": "A.S.J. D'ESPELETTE",
+            "terrain": {
+                "nom": "",
+                "adresse": [
+                    "Lotissement Otsobidea",
+                    "IRAZABALE KO BIDEA",
+                    "64250 ESPELETTE"
+                ]
+            },
+            "equipes": []
+        }
+    ],
+    "derniere_maj": "2026-04-24T13:04:05+02:00"
+}

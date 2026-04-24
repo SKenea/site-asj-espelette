@@ -1,0 +1,148 @@
+{
+    "equipe": {
+        "id": "2025_8748_U13_2",
+        "label": "U13-U12 1"
+    },
+    "matchs": [
+        {
+            "id": 54762194,
+            "date": "2025-09-27T14:00:00+02:00",
+            "statut": "joué",
+            "joue": true,
+            "competition": "U13 NIVEAU 1",
+            "categorie": "U13 - U12",
+            "journee": "1",
+            "domicile": {
+                "nom": "BIDACHE",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC537722.jpg",
+                "code": "537722",
+                "buts": 0,
+                "resultat": "PE"
+            },
+            "exterieur": {
+                "nom": "ESPELETTE",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC523288.jpg",
+                "code": "523288",
+                "buts": 2,
+                "resultat": "GA"
+            }
+        },
+        {
+            "id": 54762197,
+            "date": "2025-10-04T14:00:00+02:00",
+            "statut": "joué",
+            "joue": true,
+            "competition": "U13 NIVEAU 1",
+            "categorie": "U13 - U12",
+            "journee": "2",
+            "domicile": {
+                "nom": "ESPELETTE",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC523288.jpg",
+                "code": "523288",
+                "buts": 2,
+                "resultat": "GA"
+            },
+            "exterieur": {
+                "nom": "USTARITZ LABOURDINS 2",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC523568.jpg",
+                "code": "523568",
+                "buts": 0,
+                "resultat": "PE"
+            }
+        },
+        {
+            "id": 54762203,
+            "date": "2025-10-11T00:00:00+02:00",
+            "statut": "à venir",
+            "joue": false,
+            "competition": "U13 NIVEAU 1",
+            "categorie": "U13 - U12",
+            "journee": "3",
+            "domicile": {
+                "nom": "",
+                "logo": "",
+                "code": "",
+                "buts": null,
+                "resultat": null
+            },
+            "exterieur": {
+                "nom": "ESPELETTE",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC523288.jpg",
+                "code": "523288",
+                "buts": 0,
+                "resultat": ""
+            }
+        },
+        {
+            "id": 55361036,
+            "date": "2026-04-04T14:00:00+02:00",
+            "statut": "joué",
+            "joue": true,
+            "competition": "U13 EXCELLENCE\/2",
+            "categorie": "U13 - U12",
+            "journee": "6",
+            "domicile": {
+                "nom": "FC BAAL",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC564879.jpg",
+                "code": "564879",
+                "buts": 2,
+                "resultat": "NU"
+            },
+            "exterieur": {
+                "nom": "ESPELETTE",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC523288.jpg",
+                "code": "523288",
+                "buts": 2,
+                "resultat": "NU"
+            }
+        },
+        {
+            "id": 55361029,
+            "date": "2026-04-18T14:00:00+02:00",
+            "statut": "à venir",
+            "joue": false,
+            "competition": "U13 EXCELLENCE\/2",
+            "categorie": "U13 - U12",
+            "journee": "4",
+            "domicile": {
+                "nom": "ESPELETTE",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC523288.jpg",
+                "code": "523288",
+                "buts": 0,
+                "resultat": ""
+            },
+            "exterieur": {
+                "nom": "GANTOIS FC",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC533039.jpg",
+                "code": "533039",
+                "buts": 0,
+                "resultat": ""
+            }
+        },
+        {
+            "id": 55361039,
+            "date": "2026-04-25T14:00:00+02:00",
+            "statut": "à venir",
+            "joue": false,
+            "competition": "U13 EXCELLENCE\/2",
+            "categorie": "U13 - U12",
+            "journee": "7",
+            "domicile": {
+                "nom": "ESPELETTE",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC523288.jpg",
+                "code": "523288",
+                "buts": 0,
+                "resultat": ""
+            },
+            "exterieur": {
+                "nom": "LA RIBERE FC",
+                "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC544832.jpg",
+                "code": "544832",
+                "buts": 0,
+                "resultat": ""
+            }
+        }
+    ],
+    "derniere_maj": "2026-04-24T13:05:31+02:00",
+    "source": "scraping"
+}

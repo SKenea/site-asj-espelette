@@ -190,7 +190,7 @@ doc.add_paragraph(
     'Un bouton FR / EUS devra être visible en permanence en haut de chaque page. '
     'La langue par défaut sera le français.')
 doc.add_paragraph(
-    'Menus en basque : Hasiera, Kluba, Taldeak, Egutegia, Argazkiak, Bazkideak, Harremanetan jarri...')
+    'Menus en basque : Harrera, Kluba, Taldeak, Egutegia, Argazkiak, Bazkideak, Harremanetan jarri...')
 
 p = doc.add_paragraph()
 run = p.add_run('[À PRÉCISER] La traduction en euskara sera-t-elle assurée par un bénévole du club '

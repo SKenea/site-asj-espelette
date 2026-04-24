@@ -1,0 +1,420 @@
+{
+    "club": {
+        "nom": "A.S.J. D'ESPELETTE",
+        "logo": "https:\/\/cdn-transverse.azureedge.net\/phlogos\/BC523288.jpg",
+        "code": 523288
+    },
+    "epreuves": [
+        {
+            "nom": "U7",
+            "categorie": "U7"
+        },
+        {
+            "nom": "U8",
+            "categorie": "U8"
+        },
+        {
+            "nom": "U9 ",
+            "categorie": "U9"
+        },
+        {
+            "nom": "U10\/u11",
+            "categorie": "U11"
+        }
+    ],
+    "sites": [
+        {
+            "date": "2026-01-17T10:00:00+01:00",
+            "annule": false,
+            "organisateur": "A.S.J. D'ESPELETTE",
+            "terrain": {
+                "nom": "",
+                "adresse": [
+                    "Lotissement Otsobidea",
+                    "IRAZABALE KO BIDEA",
+                    "64250 ESPELETTE"
+                ],
+                "latitude": 43.34069,
+                "longitude": -1.44887
+            },
+            "equipes": []
+        },
+        {
+            "date": "2026-01-17T10:00:00+01:00",
+            "annule": false,
+            "organisateur": "",
+            "terrain": {
+                "nom": "",
+                "adresse": [
+                    "RUE DE GIROUETTE",
+                    "TERRAIN N° 3",
+                    "64600 ANGLET"
+                ],
+                "latitude": 43.471215975,
+                "longitude": -1.5044906
+            },
+            "equipes": []
+        },
+        {
+            "date": "2026-01-24T10:00:00+01:00",
+            "annule": false,
+            "organisateur": "A.S.J. D'ESPELETTE",
+            "terrain": {
+                "nom": "",
+                "adresse": [
+                    "Lotissement Otsobidea",
+                    "IRAZABALE KO BIDEA",
+                    "64250 ESPELETTE"
+                ],
+                "latitude": 43.34069,
+                "longitude": -1.44887
+            },
+            "equipes": []
+        },
+        {
+            "date": "2026-01-24T10:00:00+01:00",
+            "annule": false,
+            "organisateur": "SAINT PEE UNION CLUB FOOT",
+            "terrain": {
+                "nom": "",
+                "adresse": [
+                    "TRINQUET GANTXIKI",
+                    "D918",
+                    "64310 ST PEE SUR NIVELLE"
+                ],
+                "latitude": 43.35642,
+                "longitude": -1.55055
+            },
+            "equipes": []
+        },
+        {
+            "date": "2026-01-24T11:00:00+01:00",
+            "annule": false,
+            "organisateur": "AVIRON BAYONNAIS",
+            "terrain": {
+                "nom": "",
+                "adresse": [
+                    "AVENUE DE PLANTOUM",
+                    "TERRAIN ANNEXE N°2",
+                    "64100 BAYONNE"
+                ],
+                "latitude": 43.495644864,
+                "longitude": -1.4554877
+            },
+            "equipes": []
+        },
+        {
+            "date": "2026-01-31T09:30:00+01:00",
+            "annule": false,
+            "organisateur": "A.S . DES EGLANTINS D'HENDAYE",
+            "terrain": {
+                "nom": "",
+                "adresse": [
+                    "RUE ZALDITEGUIA",
+                    "64700 HENDAYE"
+                ],
+                "latitude": 43.36833,
+                "longitude": -1.75248
+            },
+            "equipes": []
+        },
+        {
+            "date": "2026-01-31T10:00:00+01:00",
+            "annule": false,
+            "organisateur": "A.S.J. D'ESPELETTE",
+            "terrain": {
+                "nom": "",
+                "adresse": [
+                    "Lotissement Otsobidea",
+                    "IRAZABALE KO BIDEA",
+                    "64250 ESPELETTE"
+                ],
+                "latitude": 43.34069,
+                "longitude": -1.44887
+            },
+            "equipes": []
+        },
+        {
+            "date": "2026-02-07T10:00:00+01:00",
+            "annule": false,
+            "organisateur": "LES GENETS D'ANGLET FOOTBALL",
+            "terrain": {
+                "nom": "",
+                "adresse": [
+                    "29 RUE de HAUSQUETTE",
+                    "64600 ANGLET"
+                ],
+                "latitude": 43.4883378,
+                "longitude": -1.51393888
+            },
+            "equipes": []
+        },
+        {
+            "date": "2026-02-07T09:30:00+01:00",
+            "annule": false,
+            "organisateur": "AVIRON BAYONNAIS",
+            "terrain": {
+                "nom": "",
+                "adresse": [
+                    "AVENUE DE PLANTOUM",
+                    "TERRAIN ANNEXE N°2",
+                    "64100 BAYONNE"
+                ],
+                "latitude": 43.495644864,
+                "longitude": -1.4554877
+            },
+            "equipes": []
+        },
+        {
+            "date": "2026-02-07T09:00:00+01:00",
+            "annule": false,
+            "organisateur": "LA JEANNE D'ARC DE BIARRITZ",
+            "terrain": {
+                "nom": "",
+                "adresse": [
+                    "25 Avenue de Gramont",
+                    "64200 BIARRITZ"
+                ],
+                "latitude": 43.47503,
+                "longitude": -1.55439
+            },
+            "equipes": []
+        },
+        {
+            "date": "2026-02-28T10:00:00+01:00",
+            "annule": false,
+            "organisateur": "CIBOURE FOOTBALL CLUB",
+            "terrain": {
+                "nom": "",
+                "adresse": [
+                    "LE BOURG",
+                    "PLAINE DES SPORTS",
+                    "64500 CIBOURE"
+                ],
+                "latitude": 43.38524,
+                "longitude": -1.66784
+            },
+            "equipes": []
+        },
+        {
+            "date": "2026-02-28T10:00:00+01:00",
+            "annule": false,
+            "organisateur": "A.S.J. D'ESPELETTE",
+            "terrain": {
+                "nom": "",
+                "adresse": [
+                    "Lotissement Otsobidea",
+                    "IRAZABALE KO BIDEA",
+                    "64250 ESPELETTE"
+                ],
+                "latitude": 43.34069,
+                "longitude": -1.44887
+            },
+            "equipes": []
+        },
+        {
+            "date": "2026-03-07T10:00:00+01:00",
+            "annule": false,
+            "organisateur": "A.S.J. D'ESPELETTE",
+            "terrain": {
+                "nom": "",
+                "adresse": [
+                    "Lotissement Otsobidea",
+                    "IRAZABALE KO BIDEA",
+                    "64250 ESPELETTE"
+                ],
+                "latitude": 43.34069,
+                "longitude": -1.44887
+            },
+            "equipes": []
+        },
+        {
+            "date": "2026-03-07T10:00:00+01:00",
+            "annule": false,
+            "organisateur": "KAMBOKO IZARRA",
+            "terrain": {
+                "nom": "",
+                "adresse": [
+                    "AVENUE D ESPAGNE",
+                    "Terrain Honneur",
+                    "64250 CAMBO LES BAINS"
+                ],
+                "latitude": 43.35675,
+                "longitude": -1.41059
+            },
+            "equipes": []
+        },
+        {
+            "date": "2026-03-07T10:00:00+01:00",
+            "annule": false,
+            "organisateur": "SAINT PEE UNION CLUB FOOT",
+            "terrain": {
+                "nom": "",
+                "adresse": [
+                    "TRINQUET GANTXIKI",
+                    "D918",
+                    "64310 ST PEE SUR NIVELLE"
+                ],
+                "latitude": 43.35642,
+                "longitude": -1.55055
+            },
+            "equipes": []
+        },
+        {
+            "date": "2026-03-14T10:00:00+01:00",
+            "annule": false,
+            "organisateur": "A.S.J. D'ESPELETTE",
+            "terrain": {
+                "nom": "",
+                "adresse": [
+                    "Lotissement Otsobidea",
+                    "IRAZABALE KO BIDEA",
+                    "64250 ESPELETTE"
+                ],
+                "latitude": 43.34069,
+                "longitude": -1.44887
+            },
+            "equipes": []
+        },
+        {
+            "date": "2026-03-14T09:45:00+01:00",
+            "annule": false,
+            "organisateur": "EL. BOUCALAIS",
+            "terrain": {
+                "nom": "",
+                "adresse": [
+                    "RUE SEVERIN LATAPY",
+                    "64340 BOUCAU"
+                ],
+                "latitude": 43.5282,
+                "longitude": -1.48465
+            },
+            "equipes": []
+        },
+        {
+            "date": "2026-03-21T10:00:00+01:00",
+            "annule": false,
+            "organisateur": "A.S.J. D'ESPELETTE",
+            "terrain": {
+                "nom": "",
+                "adresse": [
+                    "Lotissement Otsobidea",
+                    "IRAZABALE KO BIDEA",
+                    "64250 ESPELETTE"
+                ],
+                "latitude": 43.34069,
+                "longitude": -1.44887
+            },
+            "equipes": []
+        },
+        {
+            "date": "2026-03-21T10:30:00+01:00",
+            "annule": false,
+            "organisateur": "A.S.J. D'ESPELETTE",
+            "terrain": {
+                "nom": "",
+                "adresse": [
+                    "Lotissement Otsobidea",
+                    "IRAZABALE KO BIDEA",
+                    "64250 ESPELETTE"
+                ],
+                "latitude": 43.34069,
+                "longitude": -1.44887
+            },
+            "equipes": []
+        },
+        {
+            "date": "2026-03-21T10:00:00+01:00",
+            "annule": false,
+            "organisateur": "",
+            "terrain": {
+                "nom": "",
+                "adresse": [
+                    "RUE DE GIROUETTE",
+                    "TERRAIN N° 3",
+                    "64600 ANGLET"
+                ],
+                "latitude": 43.471215975,
+                "longitude": -1.5044906
+            },
+            "equipes": []
+        },
+        {
+            "date": "2026-03-28T11:00:00+01:00",
+            "annule": false,
+            "organisateur": "A.S . DES EGLANTINS D'HENDAYE",
+            "terrain": {
+                "nom": "",
+                "adresse": [
+                    "RUE ZALDITEGUIA",
+                    "64700 HENDAYE"
+                ],
+                "latitude": 43.36833,
+                "longitude": -1.75248
+            },
+            "equipes": []
+        },
+        {
+            "date": "2026-03-28T10:00:00+01:00",
+            "annule": false,
+            "organisateur": "A.S.J. D'ESPELETTE",
+            "terrain": {
+                "nom": "",
+                "adresse": [
+                    "Lotissement Otsobidea",
+                    "IRAZABALE KO BIDEA",
+                    "64250 ESPELETTE"
+                ],
+                "latitude": 43.34069,
+                "longitude": -1.44887
+            },
+            "equipes": []
+        },
+        {
+            "date": "2026-04-25T10:00:00+02:00",
+            "annule": false,
+            "organisateur": "LES GENETS D'ANGLET FOOTBALL",
+            "terrain": {
+                "nom": "",
+                "adresse": [
+                    "29 RUE de HAUSQUETTE",
+                    "64600 ANGLET"
+                ],
+                "latitude": 43.4883378,
+                "longitude": -1.51393888
+            },
+            "equipes": []
+        },
+        {
+            "date": "2026-04-25T09:00:00+02:00",
+            "annule": false,
+            "organisateur": "LES LABOURDINS D'USTARITZ",
+            "terrain": {
+                "nom": "",
+                "adresse": [
+                    "141 CHEMIN ETXEPAREA",
+                    "64480 USTARITZ"
+                ],
+                "latitude": 43.4067555,
+                "longitude": -1.462775398
+            },
+            "equipes": []
+        },
+        {
+            "date": "2026-04-25T10:00:00+02:00",
+            "annule": false,
+            "organisateur": "A.S.J. D'ESPELETTE",
+            "terrain": {
+                "nom": "",
+                "adresse": [
+                    "Lotissement Otsobidea",
+                    "IRAZABALE KO BIDEA",
+                    "64250 ESPELETTE"
+                ],
+                "latitude": 43.34069,
+                "longitude": -1.44887
+            },
+            "equipes": []
+        }
+    ]
+}

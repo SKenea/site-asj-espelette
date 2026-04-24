@@ -1,17 +1,66 @@
 [
     {
-        "id": 1,
-        "date": "2026-02-16",
+        "id": 4,
+        "date": "2026-04-20",
+        "category": "vie-club",
         "image": "",
         "fr": {
-            "title": "Bienvenue sur le nouveau site de l'ASJ Espelette !",
-            "summary": "Le club se dote enfin d'un site internet officiel. Retrouvez toutes les infos ici.",
-            "content": "L'ASJ Espelette est fier de vous presenter son nouveau site internet. Vous y retrouverez toute l'actualite du club, les resultats, le calendrier et bien plus encore."
+            "title": "Bienvenue sur le nouveau site officiel de l'ASJ Espelette !",
+            "summary": "Apres plus de 55 ans d'histoire, le club se dote enfin d'un site internet officiel. Une vitrine bilingue francais / euskara pour toutes les familles du club.",
+            "content": "L'ASJ Espelette est fiere de vous presenter son nouveau site internet officiel. Bilingue francais / euskara, il centralise les informations utiles aux licencies, aux parents et aux supporters : calendrier des matchs, resultats, actualites, galerie photos et informations pratiques. Le site sera alimente regulierement par l'equipe benevole du club. Merci de votre fidelite et bonne navigation !"
         },
         "eu": {
-            "title": "Ongi etorri ASJ Ezpeletaren webgune berrira!",
-            "summary": "Klubak bere webgune ofiziala du orain. Informazio guztia hemen aurkituko duzu.",
-            "content": "ASJ Ezpeleta harro da bere webgune berria aurkeztuz. Hemen aurkituko duzu klubaren berri guztiak, emaitzak, egutegia eta askoz gehiago."
+            "title": "Ongi etorri ASJ Ezpeletaren webgune ofizial berrira!",
+            "summary": "55 urte baino gehiagoko historia eta gero, klubak bere webgune ofiziala du azkenean. Klubeko familia guztientzat frantses / euskara webgune elebiduna.",
+            "content": "ASJ Ezpeleta harro da bere webgune berri ofiziala aurkeztuz. Frantsesa / euskara elebiduna, lizentziadunentzat, gurasoentzat eta zaleentzat informazio erabilgarri guztia biltzen du: partiden egutegia, emaitzak, berriak, argazki galeria eta informazio praktikoa. Webgunea klubeko boluntarioen taldeak elikatuko du aldizka. Eskerrik asko zuen leialtasunagatik eta nabigazio ona!"
+        }
+    },
+    {
+        "id": 3,
+        "date": "2026-04-05",
+        "category": "evenements",
+        "image": "",
+        "fr": {
+            "title": "Tournoi de printemps U11 / U13 : rendez-vous le 9 mai a Ezpeleta",
+            "summary": "Le traditionnel tournoi de printemps revient au stade Jean Eizaguirre. Une douzaine de clubs du Pays Basque et du Sud-Landes sont attendus.",
+            "content": "Le samedi 9 mai 2026, l'ASJ Espelette organise son tournoi de printemps pour les categories U11 et U13. Une douzaine de clubs du Pays Basque et du Sud-Landes ont deja confirme leur participation. Debut des matchs a 9h30, remise des trophees a 17h. Buvette et restauration sur place toute la journee (accueil des familles assure par les benevoles du club). Les inscriptions pour les equipes sont ouvertes jusqu'au 2 mai aupres du bureau."
+        },
+        "eu": {
+            "title": "Udaberriko txapelketa U11 / U13: maiatzaren 9an Ezpeletan",
+            "summary": "Udaberriko ohiko txapelketa Jean Eizaguirre estadiora itzultzen da. Euskal Herriko eta Hegoaldeko Landetako dozena bat kluburik espero ditugu.",
+            "content": "2026ko maiatzaren 9an, ASJ Ezpeletak bere udaberriko txapelketa antolatzen du U11 eta U13 mailetarako. Euskal Herriko eta Hegoaldeko Landetako dozena bat klubek berretsi dute parte-hartzea. Partidak 9:30ean hasiko dira, sariak 17:00etan banatuko dira. Tabernategia eta jatetxea egun osoan (klubeko boluntarioek familiei harrera egingo diete). Taldeen izen-emateak maiatzaren 2ra arte daude irekita zuzendaritzaren bulegoan."
+        }
+    },
+    {
+        "id": 2,
+        "date": "2026-03-12",
+        "category": "partenariat",
+        "image": "",
+        "fr": {
+            "title": "Un nouveau partenariat avec la boulangerie du village",
+            "summary": "La boulangerie d'Ezpeleta rejoint la famille des partenaires du club. Un soutien local precieux pour accompagner la formation de nos jeunes.",
+            "content": "Nous sommes ravis d'accueillir la boulangerie du village parmi les partenaires de l'ASJ Espelette pour la saison 2025-2026. Ce soutien local permettra notamment de financer du nouveau materiel pour les categories jeunes. Un grand merci a toute l'equipe de la boulangerie pour cet engagement aux cotes du club. Retrouvez l'ensemble de nos partenaires sur la page Partenaires."
+        },
+        "eu": {
+            "title": "Akordio berria herriko okindegiarekin",
+            "summary": "Ezpeletako okindegia klubaren bazkideen familian sartzen da. Gure gazteen formazioa laguntzeko tokiko sostengu baliotsua.",
+            "content": "Pozik gaude Ezpeletako okindegia ASJ Ezpeletaren bazkideen artean hartzeaz 2025-2026 denboraldirako. Tokiko sostengu honi esker, batez ere gazteen mailentzako material berria finantzatuko da. Eskerrik asko okindegiko talde osoari klubarekin duen konpromisoagatik. Gure bazkide guztiak Bazkideak orrian aurki ditzakezue."
+        }
+    },
+    {
+        "id": 1,
+        "date": "2026-02-16",
+        "category": "vie-club",
+        "image": "",
+        "fr": {
+            "title": "Reprise des entrainements apres les vacances d'hiver",
+            "summary": "Toutes les categories sont de retour sur le terrain cette semaine. Le calendrier des entrainements est mis a jour sur Sport Easy.",
+            "content": "La treve hivernale est derriere nous : toutes les equipes de l'ASJ Espelette ont repris les entrainements cette semaine au stade Jean Eizaguirre. Les horaires pour chaque categorie sont consultables sur Sport Easy. Les matchs de championnat reprennent des le week-end prochain pour les seniors et les U13."
+        },
+        "eu": {
+            "title": "Entrenamenduak berrabiatu dira negu oporretatik",
+            "summary": "Maila guztiak itzuli dira zelaira aste honetan. Entrenamenduen egutegia Sport Easy-n eguneratuta dago.",
+            "content": "Neguko etenaldia atzean dugu: ASJ Ezpeletaren talde guztiek entrenamenduak berrabiatu dituzte aste honetan Jean Eizaguirre estadioan. Maila bakoitzeko ordutegiak Sport Easy-n kontsultatu daitezke. Txapelketako partidak datorren asteburuan hasten dira berriro seniorrentzat eta U13entzat."
         }
     }
 ]

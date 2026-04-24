@@ -174,6 +174,7 @@
     <div class="admin-tabs">
         <button class="tab-btn active" data-tab="articles">Actualites</button>
         <button class="tab-btn" data-tab="galerie">Galerie photos</button>
+        <button class="tab-btn" data-tab="equipes">Equipes</button>
     </div>
 
     <main class="admin-main">
@@ -185,9 +186,19 @@
             <div class="card" id="article-form-card">
                 <h2 id="article-form-title">Nouvel article</h2>
                 <input type="hidden" id="article-edit-id" value="">
-                <div class="form-row">
-                    <label>Date</label>
-                    <input type="date" id="art-date">
+                <div class="form-row-inline">
+                    <div class="form-row">
+                        <label>Date</label>
+                        <input type="date" id="art-date">
+                    </div>
+                    <div class="form-row">
+                        <label>Categorie</label>
+                        <select id="art-category">
+                            <option value="vie-club">Vie du club</option>
+                            <option value="evenements">Evenements</option>
+                            <option value="partenariat">Partenariat</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="form-row">
                     <label>Image (nom du fichier dans uploads/ ou URL)</label>
@@ -277,6 +288,49 @@
                 </div>
             </div>
         </div>
+
+        <!-- ====== TAB EQUIPES ====== -->
+        <div id="tab-equipes" class="tab-panel">
+            <div class="card">
+                <h2>Configuration des equipes</h2>
+                <p style="color:var(--gray);font-size:0.9rem;margin-bottom:1rem;">
+                    Liste des equipes competition synchronisees avec la FFF. A mettre a jour en debut de saison (aout)
+                    quand la FFF attribue les nouveaux identifiants. Les libelles d'affichage peuvent etre modifies a tout moment.
+                </p>
+
+                <div class="form-row-inline">
+                    <div class="form-row">
+                        <label>Saison</label>
+                        <input type="text" id="eq-saison" placeholder="2025-2026">
+                    </div>
+                    <div class="form-row">
+                        <label>Club — ID FFF</label>
+                        <input type="number" id="eq-club-id" placeholder="8748">
+                    </div>
+                    <div class="form-row">
+                        <label>Club — code FFF</label>
+                        <input type="number" id="eq-club-code" placeholder="523288">
+                    </div>
+                    <div class="form-row">
+                        <label>District CDG</label>
+                        <input type="number" id="eq-club-cdg" placeholder="12">
+                    </div>
+                </div>
+
+                <h3 style="margin-top:1.5rem;margin-bottom:0.5rem;">Equipes</h3>
+                <div id="equipes-list"></div>
+
+                <div class="form-row-inline" style="margin-top:1rem;">
+                    <button class="btn btn-outline btn-sm" id="eq-add">+ Ajouter une equipe</button>
+                    <button class="btn btn-blue" id="eq-save">Enregistrer la configuration</button>
+                </div>
+
+                <p style="color:var(--gray);font-size:0.85rem;margin-top:1rem;">
+                    L'enregistrement vide le cache FFF des classements et resultats.
+                    Les donnees seront re-telechargees a la prochaine visite.
+                </p>
+            </div>
+        </div>
     </main>
 </div>
 
@@ -304,7 +358,7 @@
     }
 
     function showLogin() { $('login-screen').hidden = false; $('admin-app').hidden = true; }
-    function showApp() { $('login-screen').hidden = true; $('admin-app').hidden = false; loadArticles(); loadGalerie(); }
+    function showApp() { $('login-screen').hidden = true; $('admin-app').hidden = false; loadArticles(); loadGalerie(); loadEquipes(); }
 
     $('login-btn').addEventListener('click', function() {
         var user = $('login-user').value;
@@ -348,11 +402,13 @@
             if (articles.length === 0) {
                 html = '<p style="color:var(--gray);font-size:0.9rem;">Aucun article pour le moment.</p>';
             }
+            var CAT_LABEL = { 'vie-club': 'Vie du club', 'evenements': 'Evenements', 'partenariat': 'Partenariat' };
             articles.forEach(function(a) {
+                var cat = CAT_LABEL[a.category] || 'Vie du club';
                 html += '<div class="article-item">' +
                     '<div class="article-info">' +
                         '<h3>' + a.fr.title + '</h3>' +
-                        '<div class="meta">' + a.date + (a.eu.title ? ' &mdash; EUS: ' + a.eu.title : ' &mdash; <em>pas de traduction EUS</em>') + '</div>' +
+                        '<div class="meta">' + a.date + ' &middot; ' + cat + (a.eu.title ? ' &middot; EUS ok' : ' &middot; <em>pas de traduction EUS</em>') + '</div>' +
                     '</div>' +
                     '<div class="article-actions">' +
                         '<button class="btn btn-sm btn-outline" onclick="editArticle(' + a.id + ')">Modifier</button>' +
@@ -371,6 +427,7 @@
         editingId = id;
         $('article-edit-id').value = id;
         $('art-date').value = a.date;
+        $('art-category').value = a.category || 'vie-club';
         $('art-image').value = a.image || '';
         $('art-title-fr').value = a.fr.title;
         $('art-summary-fr').value = a.fr.summary;
@@ -402,6 +459,7 @@
         editingId = null;
         $('article-edit-id').value = '';
         $('art-date').value = '';
+        $('art-category').value = 'vie-club';
         $('art-image').value = '';
         $('art-title-fr').value = '';
         $('art-summary-fr').value = '';
@@ -420,6 +478,7 @@
 
         var data = {
             date: $('art-date').value || new Date().toISOString().slice(0, 10),
+            category: $('art-category').value,
             image: $('art-image').value,
             fr: { title: titleFr, summary: $('art-summary-fr').value, content: $('art-content-fr').value },
             eu: { title: $('art-title-eu').value, summary: $('art-summary-eu').value, content: $('art-content-eu').value }
@@ -513,6 +572,115 @@
             });
         });
     }
+
+    // ===========================
+    // EQUIPES
+    // ===========================
+    var equipesState = { saison: '', club: {}, equipes: [] };
+
+    function renderEquipesList() {
+        var host = $('equipes-list');
+        host.innerHTML = '';
+        equipesState.equipes.forEach(function (eq, i) {
+            var row = document.createElement('div');
+            row.className = 'card';
+            row.style.cssText = 'background:#f5f7fa;padding:1rem;margin-bottom:0.75rem;';
+            row.innerHTML =
+                '<div class="form-row-inline">' +
+                    '<div class="form-row"><label>Cle interne</label>' +
+                        '<input type="text" data-k="key" value="' + escAttr(eq.key) + '" placeholder="ex: senior1"></div>' +
+                    '<div class="form-row"><label>ID FFF</label>' +
+                        '<input type="text" data-k="fff_id" value="' + escAttr(eq.fff_id) + '" placeholder="2026_8748_SEM_1"></div>' +
+                    '<div class="form-row"><label>Ordre</label>' +
+                        '<input type="number" data-k="ordre" value="' + (eq.ordre || (i+1)) + '" style="max-width:80px;"></div>' +
+                '</div>' +
+                '<div class="form-row-inline">' +
+                    '<div class="form-row"><label>Libelle FR</label>' +
+                        '<input type="text" data-k="label_fr" value="' + escAttr(eq.label_fr) + '"></div>' +
+                    '<div class="form-row"><label>Libelle EU</label>' +
+                        '<input type="text" data-k="label_eu" value="' + escAttr(eq.label_eu) + '"></div>' +
+                    '<div class="form-row"><label>Competition</label>' +
+                        '<select data-k="competition">' +
+                            '<option value="1"' + (eq.competition !== false ? ' selected' : '') + '>Oui</option>' +
+                            '<option value="0"' + (eq.competition === false ? ' selected' : '') + '>Non (animation)</option>' +
+                        '</select></div>' +
+                    '<div class="form-row"><label>&nbsp;</label>' +
+                        '<button class="btn btn-outline btn-sm" data-remove="' + i + '" type="button" style="color:#b71c1c;border-color:#b71c1c;">Supprimer</button></div>' +
+                '</div>';
+
+            // bind inputs to state
+            row.querySelectorAll('[data-k]').forEach(function (input) {
+                input.addEventListener('input', function () {
+                    var k = input.dataset.k;
+                    if (k === 'competition') equipesState.equipes[i][k] = input.value === '1';
+                    else if (k === 'ordre') equipesState.equipes[i][k] = parseInt(input.value, 10) || (i+1);
+                    else equipesState.equipes[i][k] = input.value;
+                });
+            });
+            row.querySelector('[data-remove]').addEventListener('click', function () {
+                if (confirm('Supprimer l\'equipe ' + (eq.label_fr || eq.key) + ' ?')) {
+                    equipesState.equipes.splice(i, 1);
+                    renderEquipesList();
+                }
+            });
+            host.appendChild(row);
+        });
+    }
+
+    function escAttr(s) { return String(s || '').replace(/"/g, '&quot;'); }
+
+    function loadEquipes() {
+        fetch(API + '?action=equipes').then(function (r) { return r.json(); }).then(function (cfg) {
+            equipesState = {
+                saison: cfg.saison || '',
+                club: cfg.club || { id: 8748, code: 523288, cdg: 12, nom: "A.S.J. D'ESPELETTE" },
+                equipes: cfg.equipes || [],
+            };
+            $('eq-saison').value = equipesState.saison;
+            $('eq-club-id').value = equipesState.club.id || '';
+            $('eq-club-code').value = equipesState.club.code || '';
+            $('eq-club-cdg').value = equipesState.club.cdg || '';
+            renderEquipesList();
+        });
+    }
+
+    $('eq-add').addEventListener('click', function () {
+        var n = equipesState.equipes.length + 1;
+        equipesState.equipes.push({
+            key: 'equipe_' + n,
+            fff_id: '',
+            label_fr: 'Nouvelle equipe',
+            label_eu: 'Talde berria',
+            competition: true,
+            ordre: n,
+        });
+        renderEquipesList();
+    });
+
+    $('eq-save').addEventListener('click', function () {
+        var payload = {
+            saison: $('eq-saison').value,
+            club: {
+                id: parseInt($('eq-club-id').value, 10) || 8748,
+                code: parseInt($('eq-club-code').value, 10) || 523288,
+                cdg: parseInt($('eq-club-cdg').value, 10) || 12,
+                nom: equipesState.club.nom || "A.S.J. D'ESPELETTE",
+            },
+            equipes: equipesState.equipes,
+        };
+        fetch(API + '?action=equipes-save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+        }).then(function (r) { return r.json(); }).then(function (d) {
+            if (d.ok) {
+                toast('Configuration enregistree. Cache FFF vide.', true);
+                loadEquipes();
+            } else {
+                toast('Erreur : ' + (d.error || 'sauvegarde impossible'), false);
+            }
+        });
+    });
 
     // --- Init ---
     checkAuth();

@@ -68,7 +68,7 @@ Tout le site devra être disponible en français et en euskara.
 Un bouton **FR / EUS** devra être visible en permanence en haut de chaque page.
 La langue par défaut sera le français.
 
-Les menus en basque : *Hasiera, Kluba, Taldeak, Egutegia, Argazkiak, Bazkideak, Harremanetan jarri...*
+Les menus en basque : *Harrera, Kluba, Taldeak, Egutegia, Argazkiak, Bazkideak, Harremanetan jarri...*
 
 > **[À PRÉCISER]** La traduction en euskara sera-t-elle assurée par un bénévole du club ou faut-il prévoir un traducteur externe ?
 
