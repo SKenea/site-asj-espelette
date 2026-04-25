@@ -83,6 +83,12 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    // --- Année courante dans le footer ---
+    var currentYear = new Date().getFullYear();
+    document.querySelectorAll('.js-year').forEach(function (el) {
+        el.textContent = currentYear;
+    });
+
     // --- News carousels (scroll-snap + prev/next + dots) ---
     document.querySelectorAll('.news-carousel').forEach(function (carousel) {
         var track = carousel.querySelector('.news-carousel__track');
