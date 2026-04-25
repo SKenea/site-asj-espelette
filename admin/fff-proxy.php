@@ -9,7 +9,10 @@
  */
 
 define('CACHE_DIR', __DIR__ . '/../data/cache/');
-define('CACHE_TTL', 6 * 3600); // 6 heures
+// TTL long : on s'attend à ce qu'un cron (admin/fff-refresh.php) rafraichisse
+// le cache 2x par jour. Le TTL agit en filet de sécurité si le cron n'a pas
+// tourné. À 18h, ça garantit qu'au pire le cache a 18h d'ancienneté.
+define('CACHE_TTL', 18 * 3600);
 define('EQUIPES_CONFIG', __DIR__ . '/../data/equipes.json');
 define('FFF_BASE', 'https://epreuves.fff.fr');
 define('FFF_TOKEN_PATH', 'QpUOBjjSJN'); // Chemin statique pour le token
