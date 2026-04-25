@@ -299,6 +299,23 @@ if ($action === 'equipes-save' && $method === 'POST') {
         exit;
     }
 
+    // Si la saison change, archive l'ancienne config
+    $current = readJson('equipes.json');
+    $oldSaison = $current['saison'] ?? null;
+    $newSaison = trim($input['saison'] ?? '');
+    if ($oldSaison && $newSaison && $oldSaison !== $newSaison) {
+        $archiveDir = DATA_DIR . 'equipes-archive/';
+        if (!is_dir($archiveDir)) mkdir($archiveDir, 0755, true);
+        $archivePath = $archiveDir . $oldSaison . '.json';
+        // N'écrase pas un archive existant (cas où on rebascule deux fois la même saison)
+        if (!file_exists($archivePath)) {
+            file_put_contents(
+                $archivePath,
+                json_encode($current, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
+            );
+        }
+    }
+
     // Validation des équipes : key unique, fff_id non vide, label_fr non vide
     $seenKeys = [];
     $cleaned = [];
