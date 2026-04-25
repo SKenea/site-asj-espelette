@@ -169,21 +169,58 @@ largement.
 Si le cron est désactivé, on peut redescendre à 6 h pour assurer une
 fraîcheur similaire au mode purement on-demand.
 
-## 5. Mise à jour annuelle des équipes (rentrée saison)
+## 5. Procédure de rentrée de saison (août/septembre)
 
-Chaque saison, les IDs FFF des équipes changent (par ex.
-`2025_8748_SEM_1` → `2026_8748_SEM_1`).
+Chaque saison, la FFF :
+- Renouvelle les IDs des équipes (`2025_8748_SEM_1` → `2026_8748_SEM_1`)
+- Peut changer le numéro d'équipe interne (par ex. l'effectif U13 a 3 équipes
+  cette année, 2 l'an prochain)
+- Met à jour les compétitions et groupes
 
-Procédure pour le bénévole :
+### Procédure standard (5-15 min)
+
 1. Se connecter à `/admin/`
 2. Onglet **Équipes**
-3. Mettre à jour les IDs FFF, libellés FR/EU si besoin
-4. Cliquer **Enregistrer**
-5. Le cache FFF est automatiquement invalidé. Au prochain cron (ou au
-   prochain visiteur si TTL dépassé), les nouvelles données seront
-   récupérées.
+3. Cliquer **Préparer la saison suivante** (en bas de l'onglet)
+   - Ça incrémente le champ saison et préfixe les IDs avec le nouveau millésime
+   - L'ancienne configuration est archivée dans `data/equipes-archive/2025-2026.json`
+4. **Vérifier chaque ID FFF sur le site FFF** :
+   - Aller sur https://epreuves.fff.fr → recherche club « ASJ ESPELETTE »
+   - Cliquer sur chaque équipe et noter l'ID complet visible dans l'URL
+   - Format `YYYY_8748_CATEGORIE_NUMERO`
+   - Le numéro d'équipe peut différer si l'effectif a changé !
+5. Ajouter / supprimer des équipes au besoin (boutons « + Ajouter une équipe »
+   et « Supprimer »)
+6. Cliquer **Enregistrer la configuration**
+7. Le cache FFF est automatiquement vidé. Le prochain cron (ou visiteur)
+   re-télécharge tout.
 
-Aucun PHP/SFTP nécessaire pour cette opération courante.
+### Ce qui se met à jour automatiquement avec la saison
+
+- Bornes de la saison dans le proxy ([admin/fff-proxy.php](admin/fff-proxy.php))
+  qui filtre les matchs par date — **calculé depuis le champ saison**, pas en dur
+- Année copyright dans le footer (JavaScript lit `Date.now()`)
+- Chips équipes sur la page agenda (générés depuis `data/equipes.json`)
+- Hero match card et classement par équipe
+
+### Ce qu'il faut éventuellement adapter à la main
+
+- Si le club ouvre une nouvelle catégorie (ex: U15) ou en supprime une,
+  ajuster la liste des équipes via l'admin
+- Si le terrain de domicile change, modifier les pages contact / mentions légales
+- Articles annuels (« Bilan saison 2025-2026 », appel à licenciés…) à publier
+  via l'onglet Actualités
+
+### Archives
+
+`data/equipes-archive/` conserve les configs des saisons précédentes
+(format `2025-2026.json`). Utilisable pour :
+- générer plus tard une page « Palmarès » avec les classements de fin de saison
+- retracer un licencié à un effectif d'équipe historique
+- backup en cas d'erreur lors de la rentrée
+
+Aucune action n'est nécessaire pour gérer les archives — l'API les crée
+automatiquement au moment du « Préparer la saison suivante ».
 
 ## 6. Checklist pré-mise-en-ligne
 
