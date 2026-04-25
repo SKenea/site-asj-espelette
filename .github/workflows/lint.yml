@@ -1,0 +1,45 @@
+name: Lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Nécessaire pour `git diff` sur PR
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: curl, openssl, mbstring
+          tools: none
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run lint
+        run: |
+          chmod +x scripts/lint.sh
+          # Sur PR : on lint les fichiers modifiés vs main (rapide)
+          # Sur push main : on lint tout (sécurité)
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            ./scripts/lint.sh --diff
+          else
+            ./scripts/lint.sh
+          fi
