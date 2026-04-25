@@ -58,6 +58,30 @@ function getClubId()   { $c = loadEquipesConfig(); return $c['club']['id'] ?? 87
 function getClubCode() { $c = loadEquipesConfig(); return $c['club']['code'] ?? 523288; }
 function getClubCdg()  { $c = loadEquipesConfig(); return $c['club']['cdg'] ?? 12; }
 function getEquipes()  { $c = loadEquipesConfig(); return $c['equipes']; }
+function getSaison()   { $c = loadEquipesConfig(); return $c['saison'] ?? ''; }
+
+/**
+ * Déduit les bornes ISO 8601 de la saison à partir de la config equipes.json.
+ * Format saison attendu : "YYYY-YYYY" (ex: "2025-2026").
+ * Saison FFF : 1er août → 31 juillet de l'année suivante.
+ * Fallback : déduit l'année en cours si la saison n'est pas renseignée.
+ */
+function getSaisonBounds() {
+    $saison = getSaison();
+    if (preg_match('/^(\d{4})-(\d{4})$/', $saison, $m)) {
+        $debut = $m[1] . '-08-01T00:00:00+00:00';
+        $fin   = $m[2] . '-07-31T23:59:59+00:00';
+        return [$debut, $fin];
+    }
+    // Fallback : on déduit la saison courante (août → juillet)
+    $now = new DateTime();
+    $year = (int)$now->format('Y');
+    $startYear = ((int)$now->format('m') >= 8) ? $year : $year - 1;
+    return [
+        $startYear . '-08-01T00:00:00+00:00',
+        ($startYear + 1) . '-07-31T23:59:59+00:00',
+    ];
+}
 
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
@@ -123,9 +147,8 @@ if ($action === 'resultats') {
         exit;
     }
 
-    // Recuperer les matchs de la saison en cours
-    $debut = '2025-08-01T00:00:00+00:00';
-    $fin = '2026-07-01T00:00:00+00:00';
+    // Bornes saison déduites de data/equipes.json
+    list($debut, $fin) = getSaisonBounds();
 
     $url = FFF_BASE . "/api/data/matches?idEquipe=" . urlencode($equipeId)
          . "&dateDebut=" . urlencode($debut)

@@ -329,6 +329,31 @@
                     L'enregistrement vide le cache FFF des classements et resultats.
                     Les donnees seront re-telechargees a la prochaine visite.
                 </p>
+
+                <hr style="margin:2rem 0; border:none; border-top:1px solid var(--light-gray);">
+
+                <h3 style="margin-bottom:0.5rem;">Passage a la nouvelle saison</h3>
+                <p style="color:var(--gray);font-size:0.9rem;margin-bottom:1rem;">
+                    A faire chaque annee en aout/septembre, quand la FFF publie les nouveaux
+                    identifiants. Cette action :
+                </p>
+                <ul style="color:var(--gray);font-size:0.9rem;margin-left:1.5rem;margin-bottom:1rem;">
+                    <li>Incremente la saison (ex: 2025-2026 &rarr; 2026-2027)</li>
+                    <li>Pre-remplit les nouveaux IDs FFF en remplacant le millesime
+                        (ex: <code>2025_8748_SEM_1</code> &rarr; <code>2026_8748_SEM_1</code>)</li>
+                    <li>Archive l'ancienne config dans <code>data/equipes-archive/</code></li>
+                </ul>
+                <p style="color:var(--gray);font-size:0.85rem;margin-bottom:1rem;">
+                    <strong>Tu devras ensuite verifier les IDs sur le site FFF</strong>
+                    (le numero d'equipe peut changer si l'effectif evolue) et appuyer sur
+                    "Enregistrer la configuration".
+                </p>
+
+                <div class="form-row-inline">
+                    <button class="btn btn-outline" id="eq-rollover" style="color:#c9791c;border-color:#c9791c;">
+                        Preparer la saison suivante
+                    </button>
+                </div>
             </div>
         </div>
     </main>
@@ -655,6 +680,30 @@
             ordre: n,
         });
         renderEquipesList();
+    });
+
+    $('eq-rollover').addEventListener('click', function () {
+        var match = /^(\d{4})-(\d{4})$/.exec(equipesState.saison || '');
+        if (!match) {
+            toast('Saison actuelle invalide ou manquante (format YYYY-YYYY attendu)', false);
+            return;
+        }
+        var oldStart = parseInt(match[1], 10);
+        var oldEnd = parseInt(match[2], 10);
+        var newSaison = (oldStart + 1) + '-' + (oldEnd + 1);
+
+        if (!confirm('Passer de la saison ' + equipesState.saison + ' a ' + newSaison + ' ?\n\nLes IDs FFF seront pre-remplis (millesime incremente). Verifie chaque ID sur le site FFF avant d\'enregistrer.')) {
+            return;
+        }
+
+        equipesState.saison = newSaison;
+        $('eq-saison').value = newSaison;
+        equipesState.equipes.forEach(function (eq) {
+            // Remplace le 1er groupe de 4 chiffres par le nouveau millesime
+            eq.fff_id = eq.fff_id.replace(/^\d{4}/, String(oldStart + 1));
+        });
+        renderEquipesList();
+        toast('Saison preparee. Verifie les IDs FFF puis Enregistrer.', true);
     });
 
     $('eq-save').addEventListener('click', function () {
