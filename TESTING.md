@@ -121,10 +121,46 @@ gratuits, on installe deux hooks côté client.
 
 Bypass : `--no-verify` (réservé aux urgences).
 
+## 3. Analyse d'impact
+
+Pour chaque modification, on déduit automatiquement les zones du site
+potentiellement impactées et la checklist de validation correspondante.
+
+### Lancer en local
+
+```bash
+python scripts/impact.py            # diff vs main
+python scripts/impact.py --staged   # fichiers staged uniquement
+```
+
+### Comment ça marche
+
+Le script lit la liste des fichiers modifiés (via `git diff`) et utilise
+une matrice de propagation `IMPACT_RULES` qui mappe :
+- `src/css/main.css` → toutes les pages publiques
+- `src/js/fff-integration.js` → home + agenda
+- `data/equipes.json` → agenda (chips, hero, classement)
+- `admin/api.php` → console admin complète
+- *(etc.)*
+
+Pour chaque zone touchée, il propose :
+- Les **suites E2E** Playwright à relancer en priorité
+- Une **checklist de validation manuelle** (visuelle, mobile, switch FR↔EUS…)
+
+### Niveau de risque
+
+- 🟢 **Faible** : changement sur 1-2 zones, pas de page globale
+- 🟠 **Moyen** : 3+ zones touchées
+- 🔴 **Élevé** : changement sur toutes les pages, console admin, ou navigation
+
+### CI
+
+[.github/workflows/impact.yml](.github/workflows/impact.yml) lance le
+script à chaque PR et **poste le rapport en commentaire de la PR**
+(commentaire sticky, mis à jour à chaque push). Non bloquant — c'est
+de l'information pour aider la review.
+
 ## Évolutions à venir
 
-- Script `scripts/impact.py` qui lit `git diff` et liste les
-  pages/composants potentiellement touchés (commentaire automatique sur
-  les PRs)
 - Visual regression : screenshots baseline + diff pixel-par-pixel via
   Playwright `toHaveScreenshot`
