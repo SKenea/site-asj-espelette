@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+#
+# Hook pre-push : empêche le push direct sur main.
+# Force le passage par feature branch + PR.
+#
+# Pour activer :
+#   ln -sf ../../scripts/hooks/pre-push .git/hooks/pre-push
+#   chmod +x scripts/hooks/pre-push
+#
+# Pour bypasser exceptionnellement (urgence) :
+#   git push --no-verify
+
+remote="$1"
+url="$2"
+
+protected_branch="main"
+current_branch=$(git symbolic-ref --short HEAD 2>/dev/null || echo "")
+
+# Lit les refs poussés via stdin (format: <local_ref> <local_sha> <remote_ref> <remote_sha>)
+while read local_ref local_sha remote_ref remote_sha; do
+    # On ne se déclenche que pour le push de main (ou toute branche poussée vers main)
+    if [ "$remote_ref" = "refs/heads/$protected_branch" ]; then
+        # Cas autorisé : on est sur une feature branch, mais on push vers main via PR fast-forward
+        # En pratique on exclut ce cas car on demande à passer par PR
+        if [ "$current_branch" = "$protected_branch" ]; then
+            echo ""
+            echo "  ✖ Push direct sur '$protected_branch' interdit."
+            echo ""
+            echo "  Workflow attendu (GitHub Flow) :"
+            echo "    1. git switch -c feature/ma-feature"
+            echo "    2. (modifier, commit)"
+            echo "    3. git push -u origin feature/ma-feature"
+            echo "    4. gh pr create"
+            echo "    5. gh pr merge --merge --delete-branch  # quand la CI est verte"
+            echo ""
+            echo "  Pour bypasser exceptionnellement (urgence prod) :"
+            echo "    git push --no-verify"
+            echo ""
+            exit 1
+        fi
+    fi
+done
+
+exit 0
