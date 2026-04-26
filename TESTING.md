@@ -8,9 +8,10 @@ les régressions et évaluer l'impact de chaque changement.
 | Pilier | Outil | Quand | Bloquant ? |
 |---|---|---|---|
 | **1. Lint statique** | `scripts/lint.sh` | Local + CI sur chaque PR | Oui |
-| **2. Tests E2E** | Playwright headless *(à venir)* | CI sur PR | Oui |
+| **2. Tests E2E** | Playwright (`tests/e2e/`) | Local + CI sur chaque PR | Oui |
 | **3. Analyse d'impact** | `scripts/impact.py` *(à venir)* | CI : commentaire PR | Non |
 | **4. Visual regression** | `scripts/visual-diff.js` *(à venir)* | CI sur PR | Avertissement |
+| **+ Hooks Git locaux** | `scripts/hooks/` | Pre-commit + pre-push | Oui (bypass `--no-verify`) |
 
 ## 1. Lint statique
 
@@ -77,9 +78,53 @@ Le résultat est visible dans l'onglet **Checks** de la PR. Une PR avec lint
 en échec ne peut pas être mergée si la branch protection l'exige (à
 configurer côté GitHub : Settings → Branches → main).
 
+## 2. Tests E2E Playwright
+
+### Lancer en local
+
+```bash
+npm install                # première fois seulement
+npx playwright install chromium webkit   # première fois seulement
+npm run test:e2e           # lance tous les tests headless
+npm run test:e2e:headed    # avec navigateur visible (debug)
+npm run test:e2e:report    # ouvre le rapport HTML
+```
+
+Playwright démarre automatiquement le serveur PHP local
+(via [playwright.config.js](playwright.config.js)) avant les tests.
+
+### Suites de tests
+
+| Fichier | Couverture |
+|---|---|
+| `tests/e2e/smoke.spec.js` | 17 pages publiques (FR + EUS) — répond 200, titre correct, header/footer visibles, lang correct, **0 erreur JS console** |
+| `tests/e2e/agenda.spec.js` | Hero, chips équipes, sous-tabs Précédent/Ce week-end/Suivant, bilan saison, classement avec ligne ASJE surlignée, switch FR↔EUS, carousel news |
+
+### CI
+
+[.github/workflows/e2e.yml](.github/workflows/e2e.yml) lance les tests
+sur 2 navigateurs (Chromium desktop + WebKit mobile iPhone 13) à chaque
+PR. Le rapport HTML est uploadé en artifact GitHub (téléchargeable depuis
+la page de la PR) et conservé 14 jours.
+
+## Hooks Git locaux
+
+Vu que la branch protection GitHub n'est pas dispo sur les repos privés
+gratuits, on installe deux hooks côté client.
+
+```bash
+./scripts/hooks/install.sh    # une seule fois après clone
+```
+
+- **`pre-commit`** : `scripts/lint.sh --staged` avant chaque commit
+- **`pre-push`** : interdit le push direct sur `main`
+
+Bypass : `--no-verify` (réservé aux urgences).
+
 ## Évolutions à venir
 
-- Tests E2E Playwright sur les parcours critiques (home, agenda, admin)
-- Script `impact.py` qui lit `git diff` et liste les pages/composants
-  potentiellement touchés
-- Visual regression : screenshots baseline + diff pixel-par-pixel
+- Script `scripts/impact.py` qui lit `git diff` et liste les
+  pages/composants potentiellement touchés (commentaire automatique sur
+  les PRs)
+- Visual regression : screenshots baseline + diff pixel-par-pixel via
+  Playwright `toHaveScreenshot`
