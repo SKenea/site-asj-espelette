@@ -33,7 +33,8 @@ jobs:
           npx playwright install --with-deps chromium webkit
 
       - name: Run E2E tests
-        run: npx playwright test
+        # Exclut visual.spec.js (workflow visual.yml dédié)
+        run: npx playwright test --ignore-snapshots tests/e2e/smoke.spec.js tests/e2e/agenda.spec.js
         env:
           CI: true
 
