@@ -8,7 +8,8 @@ jobs:
   impact:
     runs-on: ubuntu-latest
     permissions:
-      pull-requests: write   # nécessaire pour poster le commentaire
+      contents: read         # checkout du repo
+      pull-requests: write   # poster le commentaire
 
     steps:
       - name: Checkout
