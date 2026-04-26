@@ -12,6 +12,9 @@ desktop.ini
 # Node (si utilise plus tard)
 node_modules/
 package-lock.json
+playwright-report/
+test-results/
+.playwright-results/
 
 # Env
 .env
