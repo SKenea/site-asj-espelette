@@ -1,0 +1,39 @@
+name: Impact analysis
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  impact:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write   # nécessaire pour poster le commentaire
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run impact analysis
+        id: impact
+        run: |
+          python scripts/impact.py --base origin/${{ github.base_ref }} > impact-report.md
+          echo "REPORT<<EOF" >> $GITHUB_OUTPUT
+          cat impact-report.md >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Comment on PR
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: impact-analysis
+          message: |
+            ${{ steps.impact.outputs.REPORT }}
+
+            <sub>🤖 Mis à jour à chaque push sur cette PR.</sub>
