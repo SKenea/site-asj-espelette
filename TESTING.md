@@ -160,7 +160,67 @@ script à chaque PR et **poste le rapport en commentaire de la PR**
 (commentaire sticky, mis à jour à chaque push). Non bloquant — c'est
 de l'information pour aider la review.
 
-## Évolutions à venir
+## 4. Visual regression
 
-- Visual regression : screenshots baseline + diff pixel-par-pixel via
-  Playwright `toHaveScreenshot`
+Capture les pages critiques en screenshot et compare au baseline pour
+détecter les régressions visuelles non intentionnelles (ex : un changement
+CSS qui décale un élément ailleurs sans qu'on s'en rende compte).
+
+### Pages couvertes (FR + EUS)
+
+- Home, Club, Équipes, Agenda, Galerie, Partenaires, Contact (FR)
+- Home, Egutegia (EUS) — autres pages EUS structurellement identiques
+
+Chaque page est capturée en **desktop (Chromium)** et **mobile (iPhone 13)**.
+
+### Tolérance
+
+- 0.2% de pixels différents max (couvre le rendu sub-pixel des fonts
+  entre runners GitHub Actions)
+- Animations CSS désactivées au runtime
+- Bandeau cookies fermé (état accepté forcé)
+- Délai 500 ms pour le chargement de Roboto Flex (anti-FOUT)
+
+### Première utilisation : générer le baseline initial
+
+Les baselines sont **OS-specific** (Linux ≠ Windows). On les génère
+en CI Ubuntu pour matcher l'environnement d'exécution :
+
+1. Aller sur GitHub → Actions → **Visual regression** → **Run workflow**
+2. Cocher **« Régénérer les baselines (commit auto sur la branche) »**
+3. Lancer
+4. Le workflow génère les screenshots et les commit dans
+   `tests/e2e/__screenshots__/` sur la branche
+
+Une fois cette opération faite (~5 min), le mode comparaison s'active
+automatiquement à chaque PR.
+
+### Mise à jour après un changement visuel intentionnel
+
+Quand on fait un changement de design assumé (refonte M3, nouvelle
+couleur, nouvelle section…), les baselines doivent être actualisés.
+
+**Méthode 1** : sur la branche de la PR, lancer le workflow
+**Visual regression** avec **« Régénérer les baselines »** coché.
+Les nouveaux screenshots sont commités automatiquement.
+
+**Méthode 2** (local Windows, pour debug) :
+```bash
+npm run test:visual:update
+```
+⚠ Les baselines générés sur Windows ne matcheront pas en CI Linux.
+Cette méthode est utile pour debug rapide, pas pour commit.
+
+### Lecture du diff
+
+En cas d'échec en CI, un artifact `visual-diff-report` est uploadé sur
+la PR. Téléchargez-le, dézippez, ouvrez `playwright-report/index.html` :
+chaque test échoué affiche **3 images côte à côte** : Expected (baseline),
+Actual (capture courante), Diff (zones rouges = pixels modifiés).
+
+### Triggers du workflow
+
+- **Auto sur PR** quand un fichier touché correspond à `src/**`,
+  `public/**`, `admin/**`, `data/**`, ou aux specs visuelles elles-mêmes.
+  Pas déclenché si la PR ne touche que `scripts/`, `docs/`, ou `.github/`.
+- **Manuel via `workflow_dispatch`** pour régénérer ou tester ponctuellement.
