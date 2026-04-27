@@ -6,8 +6,12 @@
  */
 
 // --- Configuration ---
-define('ADMIN_USER', 'admin');
-define('ADMIN_PASS', '$2y$10$CHANGE_ME_HASH'); // A remplacer par password_hash('votre_mot_de_passe', PASSWORD_DEFAULT)
+// Identifiants admin lus depuis les variables d'environnement (recommandé en prod).
+// Fallback : valeurs en dur pour dev local uniquement (le hash placeholder
+// est volontairement invalide pour empêcher tout login si la prod n'est pas
+// configurée correctement).
+define('ADMIN_USER', getenv('ADMIN_USER') ?: 'admin');
+define('ADMIN_PASS', getenv('ADMIN_PASS') ?: '$2y$10$INVALID_HASH_CONFIGURE_ADMIN_PASS_ENV_VAR');
 define('DATA_DIR', __DIR__ . '/../data/');
 define('UPLOAD_DIR', __DIR__ . '/uploads/');
 define('MAX_UPLOAD_SIZE', 5 * 1024 * 1024); // 5 Mo
