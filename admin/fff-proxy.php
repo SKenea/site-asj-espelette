@@ -15,7 +15,13 @@ define('CACHE_DIR', __DIR__ . '/../data/cache/');
 define('CACHE_TTL', 18 * 3600);
 define('EQUIPES_CONFIG', __DIR__ . '/../data/equipes.json');
 define('FFF_BASE', 'https://epreuves.fff.fr');
-define('FFF_TOKEN_PATH', 'QpUOBjjSJN'); // Chemin statique pour le token
+
+/**
+ * Chemin du token de sécurité FFF (utilisé pour générer le hash X-Competition).
+ * À fournir via la variable d'environnement FFF_TOKEN_PATH côté hébergeur.
+ * Fallback en dur uniquement pour le dev local.
+ */
+define('FFF_TOKEN_PATH', getenv('FFF_TOKEN_PATH') ?: 'QpUOBjjSJN');
 
 /**
  * Charge la config equipes/club depuis data/equipes.json
