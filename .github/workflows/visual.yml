@@ -66,10 +66,10 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if git diff --quiet tests/e2e/__screenshots__/; then
+          if git diff --quiet tests/e2e/visual.spec.js-snapshots/; then
             echo "Aucun baseline modifié"
           else
-            git add tests/e2e/__screenshots__/
+            git add tests/e2e/visual.spec.js-snapshots/
             git commit -m "chore: régénère les baselines visual regression"
             git push
           fi

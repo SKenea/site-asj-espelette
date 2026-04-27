@@ -190,7 +190,7 @@ en CI Ubuntu pour matcher l'environnement d'exécution :
 2. Cocher **« Régénérer les baselines (commit auto sur la branche) »**
 3. Lancer
 4. Le workflow génère les screenshots et les commit dans
-   `tests/e2e/__screenshots__/` sur la branche
+   `tests/e2e/visual.spec.js-snapshots/` sur la branche
 
 Une fois cette opération faite (~5 min), le mode comparaison s'active
 automatiquement à chaque PR.
