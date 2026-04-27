@@ -26,6 +26,9 @@ et comment configurer le rafraîchissement automatique du cache FFF.
 | Variable | Rôle | Exemple |
 |---|---|---|
 | `FFF_REFRESH_KEY` | Secret partagé pour autoriser les appels au cron | `7gK2pX9mZv8wQrLn` |
+| `FFF_TOKEN_PATH` | Chemin du token de sécurité FFF (généralement constant) | `***REMOVED***` |
+| `ADMIN_USER` | Identifiant admin de la console | `admin` |
+| `ADMIN_PASS` | Hash bcrypt du mot de passe admin (voir plus bas) | `$2y$10$abc…` |
 
 Sur Alwaysdata : *Environnement* → *Variables d'environnement* (s'applique à
 tous les sites du compte).
@@ -43,17 +46,21 @@ chmod 600 /chemin/admin/.fff-refresh-key
 
 ### Mot de passe admin
 
-Dans [admin/api.php](admin/api.php), remplacer le placeholder
-`$2y$10$CHANGE_ME_HASH` par un vrai hash bcrypt. Génération :
+Le hash bcrypt du mot de passe admin se passe **via la variable
+d'environnement `ADMIN_PASS`** (ne plus committer le hash dans le code) :
 
-```bash
-php -r 'echo password_hash("votre_mot_de_passe", PASSWORD_DEFAULT) . "\n";'
-```
+1. Générer le hash en local :
+   ```bash
+   php -r 'echo password_hash("votre_mot_de_passe", PASSWORD_DEFAULT) . "\n";'
+   ```
+2. Coller la valeur produite (commençant par `$2y$10$…`) dans la
+   variable d'environnement `ADMIN_PASS` côté hébergeur.
+3. Idem pour `ADMIN_USER` si tu veux changer le login (défaut : `admin`).
 
-Coller le hash résultat dans la constante `ADMIN_PASS`. **Ne jamais
-committer le hash en clair sur GitHub** (le repo est privé pour cette
-raison). Une amélioration future est de lire `ADMIN_PASS` depuis une
-variable d'environnement.
+Le code lit ces valeurs avec un fallback **invalide volontaire** dans
+[admin/api.php](admin/api.php) — donc si la variable d'env n'est pas
+configurée, **personne ne peut se logger**, ce qui est plus sûr qu'un
+fallback en dur.
 
 ### Permissions filesystem
 
