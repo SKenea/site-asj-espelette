@@ -1,0 +1,86 @@
+name: Visual regression
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'admin/**'
+      - 'data/**'
+      - 'tests/e2e/visual.spec.js'
+      - 'playwright.config.js'
+  workflow_dispatch:
+    inputs:
+      update_baseline:
+        description: 'Régénérer les baselines (commit auto sur la branche)'
+        type: boolean
+        default: false
+
+jobs:
+  visual:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write   # pour pousser les baselines régénérés
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ github.head_ref || github.ref_name }}
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: curl, openssl, mbstring
+          tools: none
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Playwright
+        run: |
+          npm install
+          npx playwright install --with-deps chromium webkit
+
+      - name: Run visual tests (compare)
+        if: github.event.inputs.update_baseline != 'true'
+        run: npx playwright test tests/e2e/visual.spec.js
+        env:
+          CI: true
+
+      - name: Run visual tests (update baselines)
+        if: github.event.inputs.update_baseline == 'true'
+        run: npx playwright test tests/e2e/visual.spec.js --update-snapshots
+        env:
+          CI: true
+
+      - name: Commit updated baselines
+        if: github.event.inputs.update_baseline == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A tests/e2e/visual.spec.js-snapshots/
+          if git diff --cached --quiet; then
+            echo "Aucun baseline modifié (rien à commit)"
+          else
+            git commit -m "chore: régénère les baselines visual regression"
+            git push
+            echo "Baselines commitées et poussées"
+          fi
+
+      - name: Upload diff report on failure
+        if: failure() && github.event.inputs.update_baseline != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-diff-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14
