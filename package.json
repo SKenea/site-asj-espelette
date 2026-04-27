@@ -3,6 +3,7 @@
   "private": true,
   "description": "Outils de dev et tests E2E du site ASJ Espelette",
   "scripts": {
+    "prepare": "bash scripts/hooks/install.sh",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:report": "playwright show-report",
