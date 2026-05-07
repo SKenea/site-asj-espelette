@@ -800,9 +800,10 @@
             }
             var html = '';
             members.forEach(function (m) {
+                var initials = ((m.prenom || '?').charAt(0) + (m.nom || '').charAt(0)).toUpperCase() || '?';
                 var photoHtml = m.photo
                     ? '<img src="/admin/uploads/bureau/' + m.photo + '" alt="" style="width:48px;height:48px;border-radius:50%;object-fit:cover;margin-right:0.8rem;">'
-                    : '<span style="display:inline-block;width:48px;height:48px;border-radius:50%;background:var(--light);margin-right:0.8rem;"></span>';
+                    : '<span style="display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:var(--blue);color:#fff;font-weight:600;font-size:0.9rem;margin-right:0.8rem;">' + escapeHtml(initials) + '</span>';
                 html += '<div class="article-item">' +
                     '<div class="article-info" style="display:flex;align-items:center;">' +
                         photoHtml +

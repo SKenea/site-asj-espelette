@@ -20,6 +20,14 @@
         });
     }
 
+    function getInitials(prenom, nom) {
+        var p = (prenom || '').trim();
+        var n = (nom || '').trim();
+        var first = p ? p.charAt(0) : '';
+        var last = n ? n.charAt(0) : '';
+        return (first + last).toUpperCase() || '?';
+    }
+
     fetch('/admin/api.php?action=bureau')
         .then(function (r) { return r.ok ? r.json() : []; })
         .then(function (members) {
@@ -34,7 +42,8 @@
                 var photoHtml = m.photo
                     ? '<img src="/admin/uploads/bureau/' + encodeURIComponent(m.photo)
                         + '" alt="" class="bureau-photo" loading="lazy">'
-                    : '';
+                    : '<div class="bureau-photo bureau-photo-placeholder" aria-hidden="true">'
+                        + escapeHtml(getInitials(m.prenom, m.nom)) + '</div>';
                 html += '<div class="bureau-card">' +
                     photoHtml +
                     '<h3>' + escapeHtml(fonction) + '</h3>' +
