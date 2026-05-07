@@ -34,7 +34,7 @@ jobs:
 
       - name: Run E2E tests
         # Exclut visual.spec.js (workflow visual.yml dédié)
-        run: npx playwright test --ignore-snapshots tests/e2e/smoke.spec.js tests/e2e/agenda.spec.js
+        run: npx playwright test --ignore-snapshots tests/e2e/smoke.spec.js tests/e2e/agenda.spec.js tests/e2e/admin.spec.js
         env:
           CI: true
 

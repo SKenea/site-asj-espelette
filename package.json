@@ -4,13 +4,16 @@
   "description": "Outils de dev et tests E2E du site ASJ Espelette",
   "scripts": {
     "prepare": "bash scripts/hooks/install.sh",
+    "dev": "bash scripts/dev.sh",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:report": "playwright show-report",
+    "test:e2e:admin": "playwright test tests/e2e/admin.spec.js",
     "test:visual": "playwright test tests/e2e/visual.spec.js",
     "test:visual:update": "playwright test tests/e2e/visual.spec.js --update-snapshots",
-    "lint": "./scripts/lint.sh",
-    "impact": "python scripts/impact.py"
+    "lint": "bash scripts/lint.sh",
+    "impact": "python scripts/impact.py",
+    "validate": "npm run lint && playwright test --ignore-snapshots tests/e2e/smoke.spec.js tests/e2e/agenda.spec.js tests/e2e/admin.spec.js && npm run test:visual"
   },
   "devDependencies": {
     "@playwright/test": "^1.50.0"
