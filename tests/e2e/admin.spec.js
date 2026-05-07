@@ -187,3 +187,62 @@ test.describe('Admin - équipes', () => {
     await expect(page.locator('#eq-save')).toBeVisible();
   });
 });
+
+// ============================================================
+// RESPONSIVE — vérifie que la media query <600px s'applique
+// Ne tourne que sur le projet "mobile-small" (iPhone SE 375×667)
+// ============================================================
+
+test.describe('Admin - responsive mobile (<600px)', () => {
+  test.skip(({ viewport }) => !viewport || viewport.width >= 600, 'Réservé aux viewports < 600px');
+
+  test('login-screen utilise 100svh (pas de coupure barre adresse)', async ({ page }) => {
+    await page.goto('/admin/');
+    const minHeight = await page.locator('#login-screen').evaluate(el =>
+      window.getComputedStyle(el).minHeight
+    );
+    // Le moteur calcule 100svh en pixels — doit correspondre à la hauteur viewport
+    const viewportHeight = page.viewportSize()?.height || 0;
+    const computedPx = parseFloat(minHeight);
+    expect(computedPx).toBeGreaterThanOrEqual(viewportHeight - 1);
+  });
+
+  test('formulaire article : champs FR/EU empilés (pas en grille 2 colonnes)', async ({ page }) => {
+    await login(page);
+    const inlineRow = page.locator('.form-row-inline').first();
+    const gridCols = await inlineRow.evaluate(el =>
+      window.getComputedStyle(el).gridTemplateColumns
+    );
+    // En mode mobile, doit être une seule colonne (pas "1fr 1fr" qui = 2 valeurs px)
+    const colCount = gridCols.split(' ').filter(Boolean).length;
+    expect(colCount).toBe(1);
+  });
+
+  test('onglets admin scrollables horizontalement (pas de débordement caché)', async ({ page }) => {
+    await login(page);
+    const tabsOverflow = await page.locator('.admin-tabs').evaluate(el =>
+      window.getComputedStyle(el).overflowX
+    );
+    expect(tabsOverflow).toBe('auto');
+  });
+
+  test('boutons CRUD ont un touch target ≥ 36px', async ({ page }) => {
+    await login(page);
+    // Crée un article temporaire pour avoir des boutons Modifier/Supprimer affichés
+    const tempTitle = `Test responsive ${Date.now()}`;
+    await page.locator('#art-title-fr').fill(tempTitle);
+    await page.locator('#art-save-btn').click();
+    await expect(page.locator('#articles-list')).toContainText(tempTitle);
+
+    const articleItem = page.locator('.article-item', { hasText: tempTitle });
+    const btnHeight = await articleItem.locator('button').first().evaluate(el =>
+      el.getBoundingClientRect().height
+    );
+    expect(btnHeight).toBeGreaterThanOrEqual(36);
+
+    // Cleanup
+    page.once('dialog', d => d.accept());
+    await articleItem.locator('button', { hasText: 'Supprimer' }).click();
+    await expect(page.locator('#articles-list')).not.toContainText(tempTitle);
+  });
+});

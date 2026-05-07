@@ -23,11 +23,11 @@
         /* Login */
         .login-screen {
             display: flex; align-items: center; justify-content: center;
-            min-height: 100vh;
+            min-height: 100svh;
         }
         .login-box {
             background: var(--white); padding: 2.5rem; border-radius: var(--radius);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 360px; text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 360px; max-width: 90%; text-align: center;
         }
         .login-box h1 { font-size: 1.2rem; color: var(--blue); margin-bottom: 1.5rem; }
         .login-box input {
@@ -50,12 +50,13 @@
         /* Tabs */
         .admin-tabs {
             display: flex; background: var(--white); border-bottom: 2px solid var(--border);
-            padding: 0 1.5rem;
+            padding: 0 1.5rem; overflow-x: auto; -webkit-overflow-scrolling: touch;
         }
         .tab-btn {
             padding: 0.8rem 1.5rem; border: none; background: none; cursor: pointer;
             font-weight: 600; font-size: 0.9rem; color: var(--gray);
             border-bottom: 3px solid transparent; margin-bottom: -2px;
+            min-height: 44px; white-space: nowrap;
         }
         .tab-btn.active { color: var(--blue); border-bottom-color: var(--blue); }
 
@@ -86,14 +87,16 @@
 
         /* Buttons */
         .btn {
-            display: inline-block; padding: 0.5rem 1.2rem; border: none; border-radius: 4px;
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 0.5rem 1.2rem; border: none; border-radius: 4px;
             cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: opacity 0.2s;
+            min-height: 44px; min-width: 44px;
         }
         .btn:hover { opacity: 0.85; }
         .btn-blue { background: var(--blue); color: var(--white); }
         .btn-red { background: var(--red); color: var(--white); }
         .btn-outline { background: none; border: 1px solid var(--border); color: var(--gray); }
-        .btn-sm { padding: 0.3rem 0.8rem; font-size: 0.8rem; }
+        .btn-sm { padding: 0.3rem 0.8rem; font-size: 0.8rem; min-height: 36px; }
 
         /* Article list */
         .article-item {
@@ -146,6 +149,41 @@
         .toast-err { background: var(--red); }
 
         [hidden] { display: none !important; }
+
+        /* ======================================================
+           Responsive — mobile <= 600px
+           Admin doit rester utilisable au pouce sur iPhone SE (375px).
+           ====================================================== */
+        @media (max-width: 600px) {
+            /* Forms : champs FR/EU empilés au lieu de 2 colonnes serrées */
+            .form-row-inline { grid-template-columns: 1fr; }
+
+            /* Header admin compact */
+            .admin-header { padding: 0.6rem 1rem; flex-wrap: wrap; gap: 0.5rem; }
+            .admin-header h1 { font-size: 0.9rem; }
+            .admin-header-actions { gap: 0.6rem; }
+
+            /* Onglets : padding compact, scroll horizontal déjà activé */
+            .admin-tabs { padding: 0 0.5rem; }
+            .tab-btn { padding: 0.7rem 1rem; font-size: 0.85rem; }
+
+            /* Cards : padding réduit pour gagner de l'espace écran */
+            .admin-main { margin: 1rem auto; padding: 0 0.6rem; }
+            .card { padding: 1rem; }
+
+            /* Article list : boutons sous l'info au lieu de à côté */
+            .article-item { flex-direction: column; align-items: flex-start; gap: 0.6rem; }
+            .article-actions { width: 100%; flex-wrap: wrap; }
+
+            /* Boutons CRUD plus accessibles au pouce sur mobile */
+            .btn-sm { min-height: 40px; padding: 0.5rem 0.9rem; }
+
+            /* Photo grid : 2 colonnes sur petit écran (au lieu de auto-fill 160px) */
+            .photo-grid { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+
+            /* Login : padding réduit pour viewport <= 360px */
+            .login-box { padding: 1.5rem; }
+        }
     </style>
 </head>
 <body>
