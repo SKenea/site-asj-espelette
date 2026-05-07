@@ -162,6 +162,89 @@ test.describe('Admin - galerie photos', () => {
 });
 
 // ============================================================
+// BUREAU
+// ============================================================
+
+test.describe('Admin - bureau', () => {
+  test.beforeEach(async ({ page }) => {
+    await login(page);
+    await page.locator('button.tab-btn', { hasText: /Bureau/i }).click();
+    await expect(page.locator('#tab-bureau')).toBeVisible();
+  });
+
+  test('crée, modifie et supprime un membre (sans photo)', async ({ page }) => {
+    const uniqueNom = `Test E2E ${Date.now()}`;
+    const editedFonction = 'Vice-président modifié';
+
+    // --- Création ---
+    await page.locator('#bu-prenom').fill('Jean');
+    await page.locator('#bu-nom').fill(uniqueNom);
+    await page.locator('#bu-fonction-fr').fill('Président');
+    await page.locator('#bu-fonction-eu').fill('Lehendakaria');
+    await page.locator('#bu-save-btn').click();
+
+    await expect(page.locator('#toast.show.toast-ok')).toBeVisible();
+    await expect(page.locator('#bureau-list')).toContainText(uniqueNom);
+
+    // --- Modification ---
+    const item = page.locator('.article-item', { hasText: uniqueNom });
+    await item.locator('button', { hasText: 'Modifier' }).click();
+    await expect(page.locator('#bureau-form-title')).toContainText(/Modifier/i);
+    await page.locator('#bu-fonction-fr').fill(editedFonction);
+    await page.locator('#bu-save-btn').click();
+    await expect(page.locator('#toast.show.toast-ok')).toBeVisible();
+    await expect(page.locator('#bureau-list')).toContainText(editedFonction);
+
+    // --- Suppression ---
+    page.once('dialog', d => d.accept());
+    const editedItem = page.locator('.article-item', { hasText: uniqueNom });
+    await editedItem.locator('button', { hasText: 'Supprimer' }).click();
+    await expect(page.locator('#toast.show.toast-ok')).toBeVisible();
+    await expect(page.locator('#bureau-list')).not.toContainText(uniqueNom);
+  });
+
+  test('refuse la création sans fonction française', async ({ page }) => {
+    await page.locator('#bu-prenom').fill('Pierre');
+    await page.locator('#bu-nom').fill(`Sans fonction ${Date.now()}`);
+    // Pas de fonction_fr
+    await page.locator('#bu-save-btn').click();
+    await expect(page.locator('#toast.show.toast-err')).toBeVisible();
+  });
+
+  test('upload photo : la photo est compressée en WebP côté serveur', async ({ page, request }) => {
+    const uniqueNom = `Photo test ${Date.now()}`;
+
+    await page.locator('#bu-prenom').fill('Marie');
+    await page.locator('#bu-nom').fill(uniqueNom);
+    await page.locator('#bu-fonction-fr').fill('Trésorière');
+
+    // Upload via setInputFiles avec un PNG buffer
+    await page.locator('#bu-photo-input').setInputFiles({
+      name: 'avatar-test.png',
+      mimeType: 'image/png',
+      buffer: TINY_PNG_BUFFER,
+    });
+
+    await page.locator('#bu-save-btn').click();
+    await expect(page.locator('#toast.show.toast-ok')).toBeVisible();
+    await expect(page.locator('#bureau-list')).toContainText(uniqueNom);
+
+    // Vérifie via API que la photo a un nom .webp (= conversion serveur effective)
+    const response = await request.get('/admin/api.php?action=bureau');
+    const members = await response.json();
+    const member = members.find(m => m.nom === uniqueNom);
+    expect(member).toBeDefined();
+    expect(member.photo).toMatch(/\.webp$/);
+
+    // Cleanup
+    page.once('dialog', d => d.accept());
+    const item = page.locator('.article-item', { hasText: uniqueNom });
+    await item.locator('button', { hasText: 'Supprimer' }).click();
+    await expect(page.locator('#bureau-list')).not.toContainText(uniqueNom);
+  });
+});
+
+// ============================================================
 // ÉQUIPES (lecture seulement — modifier toucherait à la prod)
 // ============================================================
 

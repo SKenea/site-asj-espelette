@@ -1013,6 +1013,21 @@ ul {
     margin-bottom: var(--spacing-sm);
 }
 
+.bureau-photo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto var(--spacing-md);
+    display: block;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.bureau-name {
+    font-weight: 500;
+    margin: 0;
+}
+
 /* --- Galerie --- */
 .galerie-filters {
     display: flex;
