@@ -9,9 +9,33 @@ les régressions et évaluer l'impact de chaque changement.
 |---|---|---|---|
 | **1. Lint statique** | `scripts/lint.sh` | Local + CI sur chaque PR | Oui |
 | **2. Tests E2E** | Playwright (`tests/e2e/`) | Local + CI sur chaque PR | Oui |
-| **3. Analyse d'impact** | `scripts/impact.py` *(à venir)* | CI : commentaire PR | Non |
-| **4. Visual regression** | `scripts/visual-diff.js` *(à venir)* | CI sur PR | Avertissement |
+| **3. Analyse d'impact** | `scripts/impact.py` | CI : commentaire PR | Non |
+| **4. Visual regression** | `tests/e2e/visual.spec.js` | CI sur PR | Oui |
 | **+ Hooks Git locaux** | `scripts/hooks/` | Pre-commit + pre-push | Oui (bypass `--no-verify`) |
+
+## Validation locale en une commande
+
+Avant de pousser une PR, lance `npm run validate` :
+
+```bash
+npm run validate
+```
+
+Cela enchaîne **lint statique → E2E (smoke + agenda + admin) → visual regression**.
+Si tout est vert en local, la CI passera (sauf écart d'environnement OS-specific
+sur les baselines visuels — voir section *Visual regression*).
+
+Pour démarrer le serveur PHP local manuellement (test dans le navigateur) :
+
+```bash
+npm run dev
+# → http://127.0.0.1:8000/fr/    (site public)
+# → http://127.0.0.1:8000/admin/ (console admin)
+```
+
+Identifiants admin en local quand le serveur est lancé via Playwright (tests) :
+`test-admin` / `asje-test-2026`. Pour `npm run dev`, lis les variables
+d'environnement `ADMIN_USER` / `ADMIN_PASS` (cf. [DEPLOY.md](DEPLOY.md)).
 
 ## 1. Lint statique
 
@@ -99,6 +123,24 @@ Playwright démarre automatiquement le serveur PHP local
 |---|---|
 | `tests/e2e/smoke.spec.js` | 17 pages publiques (FR + EUS) — répond 200, titre correct, header/footer visibles, lang correct, **0 erreur JS console** |
 | `tests/e2e/agenda.spec.js` | Hero, chips équipes, sous-tabs Précédent/Ce week-end/Suivant, bilan saison, classement avec ligne ASJE surlignée, switch FR↔EUS, carousel news |
+| `tests/e2e/admin.spec.js` | Console admin — login (bons / mauvais identifiants / logout), CRUD article, upload + suppression photo, lecture configuration équipes. Joué aussi en `mobile-small` (iPhone SE 375×667) pour valider l'usage au téléphone. |
+| `tests/e2e/visual.spec.js` | Captures d'écran de toutes les pages publiques (FR + EUS) en desktop + mobile, comparées au baseline |
+
+### Tests admin et isolation
+
+Les tests `admin.spec.js` partagent l'état serveur (`data/articles.json`, `data/galerie.json`,
+`admin/uploads/`). Pour éviter les conflits :
+
+- Chaque test crée des artefacts avec un titre/légende **unique** basé sur `Date.now()`
+  (ex: `Test E2E article 1714316455123`).
+- Chaque test **supprime** ce qu'il a créé avant de finir.
+- `playwright.config.js` désactive `fullyParallel` (les tests s'enchaînent en série).
+- Les credentials admin sont injectés via env vars `ADMIN_USER` / `ADMIN_PASS` dans
+  `webServer.env` de la config Playwright (compte `test-admin` / hash bcrypt fixe).
+
+Le test `équipes` est volontairement **lecture seule** (un save toucherait au vrai
+fichier `data/equipes.json` et déclencherait l'archivage de saison). Si on veut tester
+le save équipes, il faudra ajouter un mécanisme de snapshot/restore via `globalSetup`.
 
 ### CI
 
