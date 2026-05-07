@@ -123,6 +123,11 @@
             opacity: 0; transition: opacity 0.2s;
         }
         .photo-item:hover .photo-overlay { opacity: 1; }
+        /* Sur tactile (mobile/tablette), pas de hover : on garde l'overlay visible
+           pour que le bouton Supprimer reste accessible au pouce. */
+        @media (hover: none) {
+            .photo-item .photo-overlay { opacity: 1; background: rgba(0,0,0,0.35); }
+        }
         .photo-label {
             position: absolute; bottom: 0; left: 0; right: 0;
             padding: 0.3rem 0.5rem; background: rgba(0,0,0,0.6); color: var(--white);
