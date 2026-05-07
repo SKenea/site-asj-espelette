@@ -15,6 +15,7 @@ define('ADMIN_PASS', getenv('ADMIN_PASS') ?: '$2y$10$INVALID_HASH_CONFIGURE_ADMI
 define('DATA_DIR', __DIR__ . '/../data/');
 define('UPLOAD_DIR', __DIR__ . '/uploads/');
 define('BUREAU_UPLOAD_DIR', __DIR__ . '/uploads/bureau/');
+define('COACHS_UPLOAD_DIR', __DIR__ . '/uploads/coachs/');
 define('MAX_UPLOAD_SIZE', 5 * 1024 * 1024); // 5 Mo
 define('ALLOWED_TYPES', ['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
 define('PORTRAIT_MAX_DIM', 800); // Photos portrait redimensionnées à max 800x800 (NR)
@@ -583,6 +584,147 @@ if ($action === 'bureau-delete' && $method === 'POST') {
         return $m['id'] !== $id;
     }));
     writeJson('bureau.json', $bureau);
+    echo json_encode(['ok' => true]);
+    exit;
+}
+
+// ===========================
+// COACHS (éducateurs / encadrants techniques)
+// ===========================
+
+// GET coachs (public — pour afficher sur la page Club)
+if ($action === 'coachs' && $method === 'GET') {
+    $coachs = readJson('coachs.json');
+    usort($coachs, function ($a, $b) {
+        return ($a['ordre'] ?? 999) <=> ($b['ordre'] ?? 999);
+    });
+    echo json_encode($coachs);
+    exit;
+}
+
+// POST coachs-create
+if ($action === 'coachs-create' && $method === 'POST') {
+    requireAuth();
+    $coachs = readJson('coachs.json');
+    $maxId = 0;
+    $maxOrdre = 0;
+    foreach ($coachs as $c) {
+        if ($c['id'] > $maxId) $maxId = $c['id'];
+        if (($c['ordre'] ?? 0) > $maxOrdre) $maxOrdre = $c['ordre'];
+    }
+
+    $equipes = isset($_POST['equipes']) ? json_decode($_POST['equipes'], true) : [];
+    if (!is_array($equipes)) $equipes = [];
+
+    $coach = [
+        'id' => $maxId + 1,
+        'ordre' => intval($_POST['ordre'] ?? ($maxOrdre + 1)),
+        'prenom' => sanitize($_POST['prenom'] ?? ''),
+        'nom' => sanitize($_POST['nom'] ?? ''),
+        'fonction_fr' => sanitize($_POST['fonction_fr'] ?? ''),
+        'fonction_eu' => sanitize($_POST['fonction_eu'] ?? ''),
+        'equipes' => array_values(array_map('sanitize', $equipes)),
+        'photo' => null,
+    ];
+
+    if (!$coach['prenom'] && !$coach['nom']) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Prénom ou nom requis']);
+        exit;
+    }
+    if (!$coach['fonction_fr']) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Fonction (français) requise']);
+        exit;
+    }
+
+    if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
+        $result = processPortraitUpload($_FILES['photo'], COACHS_UPLOAD_DIR, 'coach');
+        if (isset($result['error'])) {
+            http_response_code(400);
+            echo json_encode(['error' => $result['error']]);
+            exit;
+        }
+        $coach['photo'] = $result['filename'];
+    }
+
+    $coachs[] = $coach;
+    writeJson('coachs.json', $coachs);
+    echo json_encode(['ok' => true, 'coach' => $coach]);
+    exit;
+}
+
+// POST coachs-update
+if ($action === 'coachs-update' && $method === 'POST') {
+    requireAuth();
+    $id = intval($_POST['id'] ?? 0);
+    if (!$id) {
+        http_response_code(400);
+        echo json_encode(['error' => 'ID manquant']);
+        exit;
+    }
+
+    $coachs = readJson('coachs.json');
+    $found = false;
+    foreach ($coachs as &$c) {
+        if ($c['id'] === $id) {
+            $found = true;
+            if (isset($_POST['prenom']))      $c['prenom']      = sanitize($_POST['prenom']);
+            if (isset($_POST['nom']))         $c['nom']         = sanitize($_POST['nom']);
+            if (isset($_POST['fonction_fr'])) $c['fonction_fr'] = sanitize($_POST['fonction_fr']);
+            if (isset($_POST['fonction_eu'])) $c['fonction_eu'] = sanitize($_POST['fonction_eu']);
+            if (isset($_POST['ordre']))       $c['ordre']       = intval($_POST['ordre']);
+            if (isset($_POST['equipes'])) {
+                $eq = json_decode($_POST['equipes'], true);
+                $c['equipes'] = is_array($eq) ? array_values(array_map('sanitize', $eq)) : [];
+            }
+
+            if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
+                $result = processPortraitUpload($_FILES['photo'], COACHS_UPLOAD_DIR, 'coach');
+                if (isset($result['error'])) {
+                    http_response_code(400);
+                    echo json_encode(['error' => $result['error']]);
+                    exit;
+                }
+                if (!empty($c['photo'])) {
+                    @unlink(COACHS_UPLOAD_DIR . $c['photo']);
+                }
+                $c['photo'] = $result['filename'];
+            }
+            break;
+        }
+    }
+    unset($c);
+
+    if (!$found) {
+        http_response_code(404);
+        echo json_encode(['error' => 'Coach introuvable']);
+        exit;
+    }
+
+    writeJson('coachs.json', $coachs);
+    echo json_encode(['ok' => true]);
+    exit;
+}
+
+// POST coachs-delete
+if ($action === 'coachs-delete' && $method === 'POST') {
+    requireAuth();
+    $input = json_decode(file_get_contents('php://input'), true);
+    $id = intval($input['id'] ?? 0);
+    $coachs = readJson('coachs.json');
+
+    $toDelete = null;
+    foreach ($coachs as $c) {
+        if ($c['id'] === $id) { $toDelete = $c; break; }
+    }
+    if ($toDelete && !empty($toDelete['photo'])) {
+        @unlink(COACHS_UPLOAD_DIR . $toDelete['photo']);
+    }
+    $coachs = array_values(array_filter($coachs, function ($c) use ($id) {
+        return $c['id'] !== $id;
+    }));
+    writeJson('coachs.json', $coachs);
     echo json_encode(['ok' => true]);
     exit;
 }

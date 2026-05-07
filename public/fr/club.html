@@ -90,48 +90,12 @@
         </div>
     </section>
 
-    <!-- Trombinoscope Coachs -->
+    <!-- Trombinoscope Coachs (charge dynamiquement depuis /admin/api.php?action=coachs) -->
     <section class="section section-coachs">
         <div class="container">
             <h2 class="section-title">Nos &eacute;ducateurs</h2>
-            <div class="coachs-grid" id="coachs-grid">
-                <!-- Coach cards - &agrave; remplir avec photos r&eacute;elles -->
-                <div class="coach-card">
-                    <div class="coach-photo">
-                        <img src="/src/img/coachs/placeholder.jpg" alt="&Eacute;ducateur">
-                    </div>
-                    <div class="coach-info">
-                        <h3>[Nom du coach]</h3>
-                        <p class="coach-category">Seniors</p>
-                    </div>
-                </div>
-                <div class="coach-card">
-                    <div class="coach-photo">
-                        <img src="/src/img/coachs/placeholder.jpg" alt="&Eacute;ducateur">
-                    </div>
-                    <div class="coach-info">
-                        <h3>[Nom du coach]</h3>
-                        <p class="coach-category">U13</p>
-                    </div>
-                </div>
-                <div class="coach-card">
-                    <div class="coach-photo">
-                        <img src="/src/img/coachs/placeholder.jpg" alt="&Eacute;ducateur">
-                    </div>
-                    <div class="coach-info">
-                        <h3>[Nom du coach]</h3>
-                        <p class="coach-category">U11</p>
-                    </div>
-                </div>
-                <div class="coach-card">
-                    <div class="coach-photo">
-                        <img src="/src/img/coachs/placeholder.jpg" alt="&Eacute;ducateur">
-                    </div>
-                    <div class="coach-info">
-                        <h3>[Nom du coach]</h3>
-                        <p class="coach-category">U9 / U8 / U7</p>
-                    </div>
-                </div>
+            <div class="coachs-grid" id="coachs-grid" data-lang="fr">
+                <p class="placeholder-text" id="coachs-empty">Chargement...</p>
             </div>
         </div>
     </section>
@@ -178,5 +142,6 @@
 
     <script src="/src/js/main.js"></script>
     <script src="/src/js/bureau.js" defer></script>
+    <script src="/src/js/coachs.js" defer></script>
 </body>
 </html>
