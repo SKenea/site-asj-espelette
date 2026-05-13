@@ -176,6 +176,7 @@
         <button class="tab-btn" data-tab="galerie">Galerie photos</button>
         <button class="tab-btn" data-tab="equipes">Equipes</button>
         <button class="tab-btn" data-tab="bureau">Bureau</button>
+        <button class="tab-btn" data-tab="coachs">Coachs</button>
     </div>
 
     <main class="admin-main">
@@ -410,6 +411,64 @@
                 </div>
             </div>
         </div>
+
+        <!-- ====== TAB COACHS ====== -->
+        <div id="tab-coachs" class="tab-panel">
+
+            <div class="card" id="coachs-form-card">
+                <h2 id="coachs-form-title">Nouvel encadrant</h2>
+                <input type="hidden" id="coachs-edit-id" value="">
+
+                <div class="form-row-inline">
+                    <div class="form-row">
+                        <label>Prenom *</label>
+                        <input type="text" id="co-prenom" required>
+                    </div>
+                    <div class="form-row">
+                        <label>Nom *</label>
+                        <input type="text" id="co-nom" required>
+                    </div>
+                </div>
+
+                <div class="form-row-inline">
+                    <div class="form-row">
+                        <label>Fonction (francais) *</label>
+                        <input type="text" id="co-fonction-fr" placeholder="ex: Educateur, RTJ, Resp. ecole de foot">
+                    </div>
+                    <div class="form-row">
+                        <label>Fonction (euskara)</label>
+                        <input type="text" id="co-fonction-eu" placeholder="ex: Hezitzailea">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label>Equipes encadrees (cochez plusieurs si responsable de catégorie)</label>
+                    <div id="co-equipes-checkboxes" style="display:flex;flex-wrap:wrap;gap:0.4rem 1rem;padding:0.5rem;border:1px solid var(--border);border-radius:4px;background:#fafafa;">
+                        <span style="color:var(--gray);font-size:0.85rem;">Chargement des equipes...</span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label>Photo (optionnelle, redim auto en WebP 800px max)</label>
+                    <div class="upload-zone" id="coachs-upload-zone" style="padding:1rem;">
+                        <input type="file" id="co-photo-input" accept="image/jpeg,image/png,image/webp,image/gif">
+                        <p id="co-photo-status">Cliquez ici ou glissez une photo<br><small>JPG, PNG, WebP - HEIC iPhone non supporte</small></p>
+                    </div>
+                </div>
+
+                <div style="display:flex;gap:0.5rem;">
+                    <button class="btn btn-blue" id="co-save-btn">Enregistrer</button>
+                    <button class="btn btn-outline" id="co-cancel-btn" hidden>Annuler</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Encadrants publies</h2>
+                <div id="coachs-list">
+                    <p style="color:var(--gray);font-size:0.9rem;">Chargement...</p>
+                </div>
+            </div>
+        </div>
     </main>
 </div>
 
@@ -428,6 +487,45 @@
         t.className = 'toast show ' + (ok ? 'toast-ok' : 'toast-err');
         setTimeout(function() { t.className = 'toast'; }, 3000);
     }
+    function escapeHtml(s) {
+        return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+    }
+    function getInitials(prenom, nom) {
+        var first = (prenom || '?').charAt(0);
+        var last = (nom || '').charAt(0);
+        return ((first + last).toUpperCase()) || '?';
+    }
+    // Avatar 48px pour la liste admin : photo si présente, sinon cercle bleu avec initiales.
+    function renderListAvatar(item, uploadSubdir) {
+        if (item.photo) {
+            return '<img src="/admin/uploads/' + uploadSubdir + '/' + item.photo
+                + '" alt="" style="width:48px;height:48px;border-radius:50%;'
+                + 'object-fit:cover;margin-right:0.8rem;">';
+        }
+        return '<span style="display:inline-flex;align-items:center;justify-content:center;'
+            + 'width:48px;height:48px;border-radius:50%;background:var(--blue);color:#fff;'
+            + 'font-weight:600;font-size:0.9rem;margin-right:0.8rem;">'
+            + escapeHtml(getInitials(item.prenom, item.nom)) + '</span>';
+    }
+    // Câble une zone d'upload : click pour ouvrir l'input, drag-drop pour glisser
+    // des fichiers. onFiles reçoit une FileList non vide.
+    function wireUploadZone(zoneId, inputId, onFiles) {
+        var zone = $(zoneId);
+        var input = $(inputId);
+        zone.addEventListener('click', function () { input.click(); });
+        zone.addEventListener('dragover', function (e) { e.preventDefault(); zone.classList.add('dragover'); });
+        zone.addEventListener('dragleave', function () { zone.classList.remove('dragover'); });
+        zone.addEventListener('drop', function (e) {
+            e.preventDefault();
+            zone.classList.remove('dragover');
+            if (e.dataTransfer.files.length) onFiles(e.dataTransfer.files);
+        });
+        input.addEventListener('change', function () {
+            if (input.files.length) onFiles(input.files);
+        });
+    }
 
     // --- Auth ---
     function checkAuth() {
@@ -437,7 +535,7 @@
     }
 
     function showLogin() { $('login-screen').hidden = false; $('admin-app').hidden = true; }
-    function showApp() { $('login-screen').hidden = true; $('admin-app').hidden = false; loadArticles(); loadGalerie(); loadEquipes(); loadBureau(); }
+    function showApp() { $('login-screen').hidden = true; $('admin-app').hidden = false; loadArticles(); loadGalerie(); loadEquipes(); loadBureau(); loadCoachs(); }
 
     $('login-btn').addEventListener('click', function() {
         var user = $('login-user').value;
@@ -617,19 +715,11 @@
         });
     };
 
-    // Upload zone
-    var uploadZone = $('upload-zone');
-    var photoInput = $('photo-input');
-
-    uploadZone.addEventListener('click', function() { photoInput.click(); });
-    uploadZone.addEventListener('dragover', function(e) { e.preventDefault(); uploadZone.classList.add('dragover'); });
-    uploadZone.addEventListener('dragleave', function() { uploadZone.classList.remove('dragover'); });
-    uploadZone.addEventListener('drop', function(e) {
-        e.preventDefault();
-        uploadZone.classList.remove('dragover');
-        uploadFiles(e.dataTransfer.files);
+    // Upload zone galerie (multi-fichiers)
+    wireUploadZone('upload-zone', 'photo-input', function (files) {
+        uploadFiles(files);
+        $('photo-input').value = '';
     });
-    photoInput.addEventListener('change', function() { uploadFiles(photoInput.files); photoInput.value = ''; });
 
     function uploadFiles(files) {
         var category = $('photo-category').value;
@@ -800,13 +890,9 @@
             }
             var html = '';
             members.forEach(function (m) {
-                var initials = ((m.prenom || '?').charAt(0) + (m.nom || '').charAt(0)).toUpperCase() || '?';
-                var photoHtml = m.photo
-                    ? '<img src="/admin/uploads/bureau/' + m.photo + '" alt="" style="width:48px;height:48px;border-radius:50%;object-fit:cover;margin-right:0.8rem;">'
-                    : '<span style="display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:var(--blue);color:#fff;font-weight:600;font-size:0.9rem;margin-right:0.8rem;">' + escapeHtml(initials) + '</span>';
                 html += '<div class="article-item">' +
                     '<div class="article-info" style="display:flex;align-items:center;">' +
-                        photoHtml +
+                        renderListAvatar(m, 'bureau') +
                         '<div>' +
                             '<h3>' + escapeHtml(m.prenom + ' ' + m.nom) + '</h3>' +
                             '<div class="meta">' + escapeHtml(m.fonction_fr) +
@@ -827,12 +913,6 @@
             host.querySelectorAll('[data-bu-delete]').forEach(function (b) {
                 b.addEventListener('click', function () { deleteBureau(parseInt(b.dataset.buDelete, 10)); });
             });
-        });
-    }
-
-    function escapeHtml(s) {
-        return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
-            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
         });
     }
 
@@ -882,23 +962,10 @@
         });
     };
 
-    // Upload zone — drag-drop ou click
-    $('bureau-upload-zone').addEventListener('click', function () { $('bu-photo-input').click(); });
-    $('bureau-upload-zone').addEventListener('dragover', function (e) { e.preventDefault(); $('bureau-upload-zone').classList.add('dragover'); });
-    $('bureau-upload-zone').addEventListener('dragleave', function () { $('bureau-upload-zone').classList.remove('dragover'); });
-    $('bureau-upload-zone').addEventListener('drop', function (e) {
-        e.preventDefault();
-        $('bureau-upload-zone').classList.remove('dragover');
-        if (e.dataTransfer.files.length) {
-            bureauPhotoFile = e.dataTransfer.files[0];
-            $('bu-photo-status').textContent = 'Photo prete : ' + bureauPhotoFile.name;
-        }
-    });
-    $('bu-photo-input').addEventListener('change', function () {
-        if (this.files.length) {
-            bureauPhotoFile = this.files[0];
-            $('bu-photo-status').textContent = 'Photo prete : ' + bureauPhotoFile.name;
-        }
+    // Upload zone bureau (1 fichier, on garde le premier)
+    wireUploadZone('bureau-upload-zone', 'bu-photo-input', function (files) {
+        bureauPhotoFile = files[0];
+        $('bu-photo-status').textContent = 'Photo prete : ' + bureauPhotoFile.name;
     });
 
     $('bu-cancel-btn').addEventListener('click', resetBureauForm);
@@ -926,6 +993,173 @@
                     toast(bureauEditingId ? 'Membre modifie' : 'Membre ajoute', true);
                     resetBureauForm();
                     loadBureau();
+                } else {
+                    toast('Erreur : ' + (d.error || 'inconnue'), false);
+                }
+            });
+    });
+
+    // ===========================
+    // COACHS
+    // ===========================
+    var coachsEditingId = null;
+    var coachsPhotoFile = null;
+    var equipesListCache = []; // pour générer les checkboxes
+
+    function loadCoachs() {
+        // 1) Charge la liste des équipes pour générer les checkboxes
+        fetch(API + '?action=equipes').then(function (r) { return r.json(); }).then(function (cfg) {
+            equipesListCache = (cfg && cfg.equipes) ? cfg.equipes : [];
+            renderCoachsCheckboxes([]);
+            // 2) Puis charge les coachs eux-mêmes
+            fetch(API + '?action=coachs').then(function (r) { return r.json(); }).then(function (coachs) {
+                renderCoachsList(coachs);
+            });
+        });
+    }
+
+    function renderCoachsCheckboxes(checked) {
+        var host = $('co-equipes-checkboxes');
+        if (!equipesListCache.length) {
+            host.innerHTML = '<span style="color:var(--gray);font-size:0.85rem;">Aucune equipe configuree (onglet Equipes).</span>';
+            return;
+        }
+        var html = '';
+        equipesListCache.forEach(function (eq) {
+            var isChecked = checked.indexOf(eq.key) !== -1 ? ' checked' : '';
+            html += '<label style="display:inline-flex;align-items:center;gap:0.3rem;font-weight:400;font-size:0.85rem;cursor:pointer;">' +
+                '<input type="checkbox" data-eq-key="' + escapeHtml(eq.key) + '"' + isChecked + ' style="margin:0;"> ' +
+                escapeHtml(eq.label_fr || eq.key) +
+            '</label>';
+        });
+        host.innerHTML = html;
+    }
+
+    function getSelectedEquipes() {
+        var keys = [];
+        $('co-equipes-checkboxes').querySelectorAll('input[data-eq-key]:checked').forEach(function (cb) {
+            keys.push(cb.dataset.eqKey);
+        });
+        return keys;
+    }
+
+    function renderCoachsList(coachs) {
+        var host = $('coachs-list');
+        if (!coachs.length) {
+            host.innerHTML = '<p style="color:var(--gray);font-size:0.9rem;">Aucun encadrant. Cree le premier ci-dessus.</p>';
+            return;
+        }
+        // Map des labels d'équipes pour affichage
+        var labelByKey = {};
+        equipesListCache.forEach(function (eq) { labelByKey[eq.key] = eq.label_fr || eq.key; });
+
+        var html = '';
+        coachs.forEach(function (c) {
+            var equipesLabels = (c.equipes || []).map(function (k) { return labelByKey[k] || k; }).join(', ') || '<i>aucune équipe</i>';
+            html += '<div class="article-item">' +
+                '<div class="article-info" style="display:flex;align-items:center;">' +
+                    renderListAvatar(c, 'coachs') +
+                    '<div>' +
+                        '<h3>' + escapeHtml(c.prenom + ' ' + c.nom) + '</h3>' +
+                        '<div class="meta">' + escapeHtml(c.fonction_fr) +
+                            (c.fonction_eu ? ' / ' + escapeHtml(c.fonction_eu) : '') +
+                            ' &mdash; ' + equipesLabels + '</div>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="article-actions">' +
+                    '<button class="btn btn-sm btn-outline" data-co-edit="' + c.id + '">Modifier</button>' +
+                    '<button class="btn btn-sm btn-red" data-co-delete="' + c.id + '">Supprimer</button>' +
+                '</div>' +
+            '</div>';
+        });
+        host.innerHTML = html;
+        host.querySelectorAll('[data-co-edit]').forEach(function (b) {
+            b.addEventListener('click', function () { editCoach(parseInt(b.dataset.coEdit, 10), coachs); });
+        });
+        host.querySelectorAll('[data-co-delete]').forEach(function (b) {
+            b.addEventListener('click', function () { deleteCoach(parseInt(b.dataset.coDelete, 10)); });
+        });
+    }
+
+    function editCoach(id, coachs) {
+        var c = coachs.find(function (x) { return x.id === id; });
+        if (!c) return;
+        coachsEditingId = id;
+        coachsPhotoFile = null;
+        $('coachs-edit-id').value = id;
+        $('co-prenom').value = c.prenom || '';
+        $('co-nom').value = c.nom || '';
+        $('co-fonction-fr').value = c.fonction_fr || '';
+        $('co-fonction-eu').value = c.fonction_eu || '';
+        $('co-photo-input').value = '';
+        $('co-photo-status').innerHTML = c.photo
+            ? 'Photo actuelle conservee. Cliquez pour la remplacer.<br><small>JPG, PNG, WebP.</small>'
+            : 'Cliquez ici ou glissez une photo<br><small>JPG, PNG, WebP - HEIC iPhone non supporte</small>';
+        renderCoachsCheckboxes(c.equipes || []);
+        $('coachs-form-title').textContent = 'Modifier ' + (c.prenom + ' ' + c.nom).trim();
+        $('co-cancel-btn').hidden = false;
+        document.querySelector('button[data-tab="coachs"]').click();
+        $('coachs-form-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function resetCoachsForm() {
+        coachsEditingId = null;
+        coachsPhotoFile = null;
+        $('coachs-edit-id').value = '';
+        $('co-prenom').value = '';
+        $('co-nom').value = '';
+        $('co-fonction-fr').value = '';
+        $('co-fonction-eu').value = '';
+        $('co-photo-input').value = '';
+        $('co-photo-status').innerHTML = 'Cliquez ici ou glissez une photo<br><small>JPG, PNG, WebP - HEIC iPhone non supporte</small>';
+        renderCoachsCheckboxes([]);
+        $('coachs-form-title').textContent = 'Nouvel encadrant';
+        $('co-cancel-btn').hidden = true;
+    }
+
+    window.deleteCoach = function (id) {
+        if (!confirm('Supprimer cet encadrant ?')) return;
+        fetch(API + '?action=coachs-delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: id }),
+        }).then(function (r) { return r.json(); }).then(function (d) {
+            if (d.ok) { toast('Encadrant supprime', true); loadCoachs(); resetCoachsForm(); }
+            else { toast('Erreur : ' + (d.error || ''), false); }
+        });
+    };
+
+    wireUploadZone('coachs-upload-zone', 'co-photo-input', function (files) {
+        coachsPhotoFile = files[0];
+        $('co-photo-status').textContent = 'Photo prete : ' + coachsPhotoFile.name;
+    });
+
+    $('co-cancel-btn').addEventListener('click', resetCoachsForm);
+
+    $('co-save-btn').addEventListener('click', function () {
+        var prenom = $('co-prenom').value.trim();
+        var nom = $('co-nom').value.trim();
+        var fonctionFr = $('co-fonction-fr').value.trim();
+        if (!prenom && !nom) { toast('Prenom ou nom requis', false); return; }
+        if (!fonctionFr) { toast('Fonction (francais) requise', false); return; }
+
+        var formData = new FormData();
+        if (coachsEditingId) formData.append('id', coachsEditingId);
+        formData.append('prenom', prenom);
+        formData.append('nom', nom);
+        formData.append('fonction_fr', fonctionFr);
+        formData.append('fonction_eu', $('co-fonction-eu').value.trim());
+        formData.append('equipes', JSON.stringify(getSelectedEquipes()));
+        if (coachsPhotoFile) formData.append('photo', coachsPhotoFile);
+
+        var url = API + '?action=' + (coachsEditingId ? 'coachs-update' : 'coachs-create');
+        fetch(url, { method: 'POST', body: formData })
+            .then(function (r) { return r.json(); })
+            .then(function (d) {
+                if (d.ok) {
+                    toast(coachsEditingId ? 'Encadrant modifie' : 'Encadrant ajoute', true);
+                    resetCoachsForm();
+                    loadCoachs();
                 } else {
                     toast('Erreur : ' + (d.error || 'inconnue'), false);
                 }

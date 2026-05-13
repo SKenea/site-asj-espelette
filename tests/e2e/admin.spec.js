@@ -245,6 +245,78 @@ test.describe('Admin - bureau', () => {
 });
 
 // ============================================================
+// COACHS
+// ============================================================
+
+test.describe('Admin - coachs', () => {
+  test.beforeEach(async ({ page }) => {
+    await login(page);
+    await page.locator('button.tab-btn', { hasText: /Coachs/i }).click();
+    await expect(page.locator('#tab-coachs')).toBeVisible();
+  });
+
+  test('crée, modifie et supprime un coach (sans photo, multi-équipes)', async ({ page, request }) => {
+    const uniqueNom = `Coach E2E ${Date.now()}`;
+
+    // --- Création ---
+    await page.locator('#co-prenom').fill('Pierre');
+    await page.locator('#co-nom').fill(uniqueNom);
+    await page.locator('#co-fonction-fr').fill('RTJ');
+    await page.locator('#co-fonction-eu').fill('RTJ');
+
+    // Coche les 2 premières équipes (s'il y en a)
+    const checkboxes = page.locator('#co-equipes-checkboxes input[type=checkbox]');
+    const count = await checkboxes.count();
+    if (count >= 2) {
+      await checkboxes.nth(0).check();
+      await checkboxes.nth(1).check();
+    } else if (count === 1) {
+      await checkboxes.nth(0).check();
+    }
+
+    await page.locator('#co-save-btn').click();
+    await expect(page.locator('#toast.show.toast-ok')).toBeVisible();
+    await expect(page.locator('#coachs-list')).toContainText(uniqueNom);
+
+    // --- Vérifie via API que les équipes ont été enregistrées ---
+    const response = await request.get('/admin/api.php?action=coachs');
+    const coachs = await response.json();
+    const coach = coachs.find(c => c.nom === uniqueNom);
+    expect(coach).toBeDefined();
+    expect(coach.fonction_fr).toBe('RTJ');
+    if (count >= 2) {
+      expect(coach.equipes.length).toBe(2);
+    } else if (count === 1) {
+      expect(coach.equipes.length).toBe(1);
+    }
+
+    // --- Modification ---
+    const item = page.locator('.article-item', { hasText: uniqueNom });
+    await item.locator('button', { hasText: 'Modifier' }).click();
+    await expect(page.locator('#coachs-form-title')).toContainText(/Modifier/i);
+    await page.locator('#co-fonction-fr').fill('Educateur principal');
+    await page.locator('#co-save-btn').click();
+    await expect(page.locator('#toast.show.toast-ok')).toBeVisible();
+    await expect(page.locator('#coachs-list')).toContainText('Educateur principal');
+
+    // --- Suppression ---
+    page.once('dialog', d => d.accept());
+    const editedItem = page.locator('.article-item', { hasText: uniqueNom });
+    await editedItem.locator('button', { hasText: 'Supprimer' }).click();
+    await expect(page.locator('#toast.show.toast-ok')).toBeVisible();
+    await expect(page.locator('#coachs-list')).not.toContainText(uniqueNom);
+  });
+
+  test('refuse la création sans fonction française', async ({ page }) => {
+    await page.locator('#co-prenom').fill('Marc');
+    await page.locator('#co-nom').fill(`Sans fct ${Date.now()}`);
+    // pas de fonction_fr
+    await page.locator('#co-save-btn').click();
+    await expect(page.locator('#toast.show.toast-err')).toBeVisible();
+  });
+});
+
+// ============================================================
 // ÉQUIPES (lecture seulement — modifier toucherait à la prod)
 // ============================================================
 

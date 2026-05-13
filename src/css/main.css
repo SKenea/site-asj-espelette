@@ -973,13 +973,27 @@ ul {
     padding: var(--spacing-lg);
 }
 
-.coach-photo img {
+.coach-photo img,
+.coach-photo .coach-photo-placeholder {
     width: 140px;
     height: 140px;
     border-radius: 50%;
     object-fit: cover;
     margin: 0 auto var(--spacing-md);
     border: 3px solid var(--color-primary);
+    box-sizing: border-box;
+}
+
+.coach-photo .coach-photo-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary, #fff);
+    font-size: 2.6rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    user-select: none;
 }
 
 .coach-info h3 {
