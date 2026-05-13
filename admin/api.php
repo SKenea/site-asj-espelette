@@ -14,8 +14,10 @@ define('ADMIN_USER', getenv('ADMIN_USER') ?: 'admin');
 define('ADMIN_PASS', getenv('ADMIN_PASS') ?: '$2y$10$INVALID_HASH_CONFIGURE_ADMIN_PASS_ENV_VAR');
 define('DATA_DIR', __DIR__ . '/../data/');
 define('UPLOAD_DIR', __DIR__ . '/uploads/');
+define('BUREAU_UPLOAD_DIR', __DIR__ . '/uploads/bureau/');
 define('MAX_UPLOAD_SIZE', 5 * 1024 * 1024); // 5 Mo
 define('ALLOWED_TYPES', ['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
+define('PORTRAIT_MAX_DIM', 800); // Photos portrait redimensionnées à max 800x800 (NR)
 
 // --- Headers ---
 header('Content-Type: application/json; charset=utf-8');
@@ -51,6 +53,74 @@ function writeJson($file, $data) {
 
 function sanitize($str) {
     return htmlspecialchars(trim($str), ENT_QUOTES, 'UTF-8');
+}
+
+/**
+ * Traite une photo uploadée (portrait bureau / coach / partenaire) :
+ * - vérifie taille et type
+ * - redimensionne à PORTRAIT_MAX_DIM × PORTRAIT_MAX_DIM (max, ratio préservé)
+ * - réencode en WebP qualité 80 (~10× plus léger qu'un JPEG iPhone non traité)
+ * - le réencodage strippe les EXIF (vie privée + poids)
+ * Retourne le nom de fichier généré (relatif au dossier $destDir) ou ['error' => msg].
+ */
+function processPortraitUpload(array $file, string $destDir, string $prefix = 'photo'): array {
+    if (!extension_loaded('gd')) {
+        return ['error' => 'Extension GD non disponible côté serveur'];
+    }
+    if ($file['size'] > MAX_UPLOAD_SIZE) {
+        return ['error' => 'Fichier trop volumineux (max 5 Mo avant compression)'];
+    }
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mime = finfo_file($finfo, $file['tmp_name']);
+    finfo_close($finfo);
+    if (!in_array($mime, ALLOWED_TYPES, true)) {
+        return ['error' => 'Type de fichier non autorisé (JPG, PNG, WebP, GIF uniquement). Convertir HEIC iPhone en JPEG.'];
+    }
+
+    // Charge l'image source
+    $src = null;
+    switch ($mime) {
+        case 'image/jpeg': $src = @imagecreatefromjpeg($file['tmp_name']); break;
+        case 'image/png':  $src = @imagecreatefrompng($file['tmp_name']); break;
+        case 'image/webp': $src = @imagecreatefromwebp($file['tmp_name']); break;
+        case 'image/gif':  $src = @imagecreatefromgif($file['tmp_name']); break;
+    }
+    if (!$src) return ['error' => 'Impossible de décoder l\'image'];
+
+    $w = imagesx($src);
+    $h = imagesy($src);
+    $maxDim = PORTRAIT_MAX_DIM;
+
+    // Calcule les nouvelles dimensions (ratio préservé, max maxDim sur la plus grande)
+    if ($w > $maxDim || $h > $maxDim) {
+        if ($w >= $h) {
+            $newW = $maxDim;
+            $newH = (int) round($h * ($maxDim / $w));
+        } else {
+            $newH = $maxDim;
+            $newW = (int) round($w * ($maxDim / $h));
+        }
+    } else {
+        $newW = $w;
+        $newH = $h;
+    }
+
+    // Crée l'image cible (rempli en blanc pour éviter les transparences PNG cassées en WebP)
+    $dst = imagecreatetruecolor($newW, $newH);
+    imagecopyresampled($dst, $src, 0, 0, 0, 0, $newW, $newH, $w, $h);
+
+    if (!is_dir($destDir)) {
+        mkdir($destDir, 0755, true);
+    }
+    $filename = date('Y-m-d') . '_' . bin2hex(random_bytes(4)) . '.webp';
+    $destPath = $destDir . $filename;
+
+    $ok = imagewebp($dst, $destPath, 80);
+    imagedestroy($src);
+    imagedestroy($dst);
+
+    if (!$ok) return ['error' => 'Erreur lors de la sauvegarde de la photo'];
+    return ['filename' => $filename];
 }
 
 const ARTICLE_CATEGORIES = ['vie-club', 'evenements', 'partenariat'];
@@ -376,6 +446,144 @@ if ($action === 'equipes-save' && $method === 'POST') {
     }
 
     echo json_encode(['ok' => true, 'config' => $config]);
+    exit;
+}
+
+// ===========================
+// BUREAU (membres du bureau associatif)
+// ===========================
+
+// GET bureau (public — pour afficher sur la page Club)
+if ($action === 'bureau' && $method === 'GET') {
+    $bureau = readJson('bureau.json');
+    // Trie par ordre croissant pour affichage stable
+    usort($bureau, function ($a, $b) {
+        return ($a['ordre'] ?? 999) <=> ($b['ordre'] ?? 999);
+    });
+    echo json_encode($bureau);
+    exit;
+}
+
+// POST bureau-create (création d'un membre, photo optionnelle dans le même appel)
+if ($action === 'bureau-create' && $method === 'POST') {
+    requireAuth();
+
+    $bureau = readJson('bureau.json');
+    $maxId = 0;
+    $maxOrdre = 0;
+    foreach ($bureau as $m) {
+        if ($m['id'] > $maxId) $maxId = $m['id'];
+        if (($m['ordre'] ?? 0) > $maxOrdre) $maxOrdre = $m['ordre'];
+    }
+
+    $member = [
+        'id' => $maxId + 1,
+        'ordre' => intval($_POST['ordre'] ?? ($maxOrdre + 1)),
+        'prenom' => sanitize($_POST['prenom'] ?? ''),
+        'nom' => sanitize($_POST['nom'] ?? ''),
+        'fonction_fr' => sanitize($_POST['fonction_fr'] ?? ''),
+        'fonction_eu' => sanitize($_POST['fonction_eu'] ?? ''),
+        'photo' => null,
+    ];
+
+    if (!$member['prenom'] && !$member['nom']) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Prénom ou nom requis']);
+        exit;
+    }
+    if (!$member['fonction_fr']) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Fonction (français) requise']);
+        exit;
+    }
+
+    // Photo optionnelle
+    if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
+        $result = processPortraitUpload($_FILES['photo'], BUREAU_UPLOAD_DIR, 'bureau');
+        if (isset($result['error'])) {
+            http_response_code(400);
+            echo json_encode(['error' => $result['error']]);
+            exit;
+        }
+        $member['photo'] = $result['filename'];
+    }
+
+    $bureau[] = $member;
+    writeJson('bureau.json', $bureau);
+    echo json_encode(['ok' => true, 'member' => $member]);
+    exit;
+}
+
+// POST bureau-update (modification, photo optionnelle qui remplace l'ancienne)
+if ($action === 'bureau-update' && $method === 'POST') {
+    requireAuth();
+    $id = intval($_POST['id'] ?? 0);
+    if (!$id) {
+        http_response_code(400);
+        echo json_encode(['error' => 'ID manquant']);
+        exit;
+    }
+
+    $bureau = readJson('bureau.json');
+    $found = false;
+    foreach ($bureau as &$m) {
+        if ($m['id'] === $id) {
+            $found = true;
+            if (isset($_POST['prenom'])) $m['prenom'] = sanitize($_POST['prenom']);
+            if (isset($_POST['nom']))    $m['nom']    = sanitize($_POST['nom']);
+            if (isset($_POST['fonction_fr'])) $m['fonction_fr'] = sanitize($_POST['fonction_fr']);
+            if (isset($_POST['fonction_eu'])) $m['fonction_eu'] = sanitize($_POST['fonction_eu']);
+            if (isset($_POST['ordre']))  $m['ordre']  = intval($_POST['ordre']);
+
+            // Nouvelle photo : remplace l'ancienne
+            if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
+                $result = processPortraitUpload($_FILES['photo'], BUREAU_UPLOAD_DIR, 'bureau');
+                if (isset($result['error'])) {
+                    http_response_code(400);
+                    echo json_encode(['error' => $result['error']]);
+                    exit;
+                }
+                // Supprime l'ancienne photo si elle existait
+                if (!empty($m['photo'])) {
+                    @unlink(BUREAU_UPLOAD_DIR . $m['photo']);
+                }
+                $m['photo'] = $result['filename'];
+            }
+            break;
+        }
+    }
+    unset($m);
+
+    if (!$found) {
+        http_response_code(404);
+        echo json_encode(['error' => 'Membre introuvable']);
+        exit;
+    }
+
+    writeJson('bureau.json', $bureau);
+    echo json_encode(['ok' => true]);
+    exit;
+}
+
+// POST bureau-delete (supprime un membre + sa photo)
+if ($action === 'bureau-delete' && $method === 'POST') {
+    requireAuth();
+    $input = json_decode(file_get_contents('php://input'), true);
+    $id = intval($input['id'] ?? 0);
+    $bureau = readJson('bureau.json');
+
+    $toDelete = null;
+    foreach ($bureau as $m) {
+        if ($m['id'] === $id) { $toDelete = $m; break; }
+    }
+    if ($toDelete && !empty($toDelete['photo'])) {
+        @unlink(BUREAU_UPLOAD_DIR . $toDelete['photo']);
+    }
+    $bureau = array_values(array_filter($bureau, function ($m) use ($id) {
+        return $m['id'] !== $id;
+    }));
+    writeJson('bureau.json', $bureau);
+    echo json_encode(['ok' => true]);
     exit;
 }
 

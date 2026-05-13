@@ -175,6 +175,7 @@
         <button class="tab-btn active" data-tab="articles">Actualites</button>
         <button class="tab-btn" data-tab="galerie">Galerie photos</button>
         <button class="tab-btn" data-tab="equipes">Equipes</button>
+        <button class="tab-btn" data-tab="bureau">Bureau</button>
     </div>
 
     <main class="admin-main">
@@ -356,6 +357,59 @@
                 </div>
             </div>
         </div>
+
+        <!-- ====== TAB BUREAU ====== -->
+        <div id="tab-bureau" class="tab-panel">
+
+            <!-- Formulaire creation/edition -->
+            <div class="card" id="bureau-form-card">
+                <h2 id="bureau-form-title">Nouveau membre du bureau</h2>
+                <input type="hidden" id="bureau-edit-id" value="">
+
+                <div class="form-row-inline">
+                    <div class="form-row">
+                        <label>Prenom *</label>
+                        <input type="text" id="bu-prenom" required>
+                    </div>
+                    <div class="form-row">
+                        <label>Nom *</label>
+                        <input type="text" id="bu-nom" required>
+                    </div>
+                </div>
+
+                <div class="form-row-inline">
+                    <div class="form-row">
+                        <label>Fonction (francais) *</label>
+                        <input type="text" id="bu-fonction-fr" placeholder="ex: President">
+                    </div>
+                    <div class="form-row">
+                        <label>Fonction (euskara)</label>
+                        <input type="text" id="bu-fonction-eu" placeholder="ex: Lehendakaria">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label>Photo (optionnelle, redim auto en WebP 800px max)</label>
+                    <div class="upload-zone" id="bureau-upload-zone" style="padding:1rem;">
+                        <input type="file" id="bu-photo-input" accept="image/jpeg,image/png,image/webp,image/gif">
+                        <p id="bu-photo-status">Cliquez ici ou glissez une photo<br><small>JPG, PNG, WebP - HEIC iPhone non supporte (convertir en JPEG)</small></p>
+                    </div>
+                </div>
+
+                <div style="display:flex;gap:0.5rem;">
+                    <button class="btn btn-blue" id="bu-save-btn">Enregistrer</button>
+                    <button class="btn btn-outline" id="bu-cancel-btn" hidden>Annuler</button>
+                </div>
+            </div>
+
+            <!-- Liste des membres -->
+            <div class="card">
+                <h2>Membres publies</h2>
+                <div id="bureau-list">
+                    <p style="color:var(--gray);font-size:0.9rem;">Chargement...</p>
+                </div>
+            </div>
+        </div>
     </main>
 </div>
 
@@ -383,7 +437,7 @@
     }
 
     function showLogin() { $('login-screen').hidden = false; $('admin-app').hidden = true; }
-    function showApp() { $('login-screen').hidden = true; $('admin-app').hidden = false; loadArticles(); loadGalerie(); loadEquipes(); }
+    function showApp() { $('login-screen').hidden = true; $('admin-app').hidden = false; loadArticles(); loadGalerie(); loadEquipes(); loadBureau(); }
 
     $('login-btn').addEventListener('click', function() {
         var user = $('login-user').value;
@@ -729,6 +783,153 @@
                 toast('Erreur : ' + (d.error || 'sauvegarde impossible'), false);
             }
         });
+    });
+
+    // ===========================
+    // BUREAU
+    // ===========================
+    var bureauEditingId = null;
+    var bureauPhotoFile = null;
+
+    function loadBureau() {
+        fetch(API + '?action=bureau').then(function (r) { return r.json(); }).then(function (members) {
+            var host = $('bureau-list');
+            if (!members.length) {
+                host.innerHTML = '<p style="color:var(--gray);font-size:0.9rem;">Aucun membre. Cree le premier ci-dessus.</p>';
+                return;
+            }
+            var html = '';
+            members.forEach(function (m) {
+                var initials = ((m.prenom || '?').charAt(0) + (m.nom || '').charAt(0)).toUpperCase() || '?';
+                var photoHtml = m.photo
+                    ? '<img src="/admin/uploads/bureau/' + m.photo + '" alt="" style="width:48px;height:48px;border-radius:50%;object-fit:cover;margin-right:0.8rem;">'
+                    : '<span style="display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:var(--blue);color:#fff;font-weight:600;font-size:0.9rem;margin-right:0.8rem;">' + escapeHtml(initials) + '</span>';
+                html += '<div class="article-item">' +
+                    '<div class="article-info" style="display:flex;align-items:center;">' +
+                        photoHtml +
+                        '<div>' +
+                            '<h3>' + escapeHtml(m.prenom + ' ' + m.nom) + '</h3>' +
+                            '<div class="meta">' + escapeHtml(m.fonction_fr) +
+                                (m.fonction_eu ? ' / ' + escapeHtml(m.fonction_eu) : '') +
+                                ' &mdash; ordre ' + m.ordre + '</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="article-actions">' +
+                        '<button class="btn btn-sm btn-outline" data-bu-edit="' + m.id + '">Modifier</button>' +
+                        '<button class="btn btn-sm btn-red" data-bu-delete="' + m.id + '">Supprimer</button>' +
+                    '</div>' +
+                '</div>';
+            });
+            host.innerHTML = html;
+            host.querySelectorAll('[data-bu-edit]').forEach(function (b) {
+                b.addEventListener('click', function () { editBureau(parseInt(b.dataset.buEdit, 10), members); });
+            });
+            host.querySelectorAll('[data-bu-delete]').forEach(function (b) {
+                b.addEventListener('click', function () { deleteBureau(parseInt(b.dataset.buDelete, 10)); });
+            });
+        });
+    }
+
+    function escapeHtml(s) {
+        return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+    }
+
+    function editBureau(id, members) {
+        var m = members.find(function (x) { return x.id === id; });
+        if (!m) return;
+        bureauEditingId = id;
+        bureauPhotoFile = null;
+        $('bureau-edit-id').value = id;
+        $('bu-prenom').value = m.prenom || '';
+        $('bu-nom').value = m.nom || '';
+        $('bu-fonction-fr').value = m.fonction_fr || '';
+        $('bu-fonction-eu').value = m.fonction_eu || '';
+        $('bu-photo-input').value = '';
+        $('bu-photo-status').innerHTML = m.photo
+            ? 'Photo actuelle conservee. Cliquez pour la remplacer.<br><small>JPG, PNG, WebP.</small>'
+            : 'Cliquez ici ou glissez une photo<br><small>JPG, PNG, WebP - HEIC iPhone non supporte (convertir en JPEG)</small>';
+        $('bureau-form-title').textContent = 'Modifier ' + (m.prenom + ' ' + m.nom).trim();
+        $('bu-cancel-btn').hidden = false;
+        document.querySelector('button[data-tab="bureau"]').click();
+        $('bureau-form-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function resetBureauForm() {
+        bureauEditingId = null;
+        bureauPhotoFile = null;
+        $('bureau-edit-id').value = '';
+        $('bu-prenom').value = '';
+        $('bu-nom').value = '';
+        $('bu-fonction-fr').value = '';
+        $('bu-fonction-eu').value = '';
+        $('bu-photo-input').value = '';
+        $('bu-photo-status').innerHTML = 'Cliquez ici ou glissez une photo<br><small>JPG, PNG, WebP - HEIC iPhone non supporte (convertir en JPEG)</small>';
+        $('bureau-form-title').textContent = 'Nouveau membre du bureau';
+        $('bu-cancel-btn').hidden = true;
+    }
+
+    window.deleteBureau = function (id) {
+        if (!confirm('Supprimer ce membre du bureau ?')) return;
+        fetch(API + '?action=bureau-delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: id }),
+        }).then(function (r) { return r.json(); }).then(function (d) {
+            if (d.ok) { toast('Membre supprime', true); loadBureau(); resetBureauForm(); }
+            else { toast('Erreur : ' + (d.error || ''), false); }
+        });
+    };
+
+    // Upload zone — drag-drop ou click
+    $('bureau-upload-zone').addEventListener('click', function () { $('bu-photo-input').click(); });
+    $('bureau-upload-zone').addEventListener('dragover', function (e) { e.preventDefault(); $('bureau-upload-zone').classList.add('dragover'); });
+    $('bureau-upload-zone').addEventListener('dragleave', function () { $('bureau-upload-zone').classList.remove('dragover'); });
+    $('bureau-upload-zone').addEventListener('drop', function (e) {
+        e.preventDefault();
+        $('bureau-upload-zone').classList.remove('dragover');
+        if (e.dataTransfer.files.length) {
+            bureauPhotoFile = e.dataTransfer.files[0];
+            $('bu-photo-status').textContent = 'Photo prete : ' + bureauPhotoFile.name;
+        }
+    });
+    $('bu-photo-input').addEventListener('change', function () {
+        if (this.files.length) {
+            bureauPhotoFile = this.files[0];
+            $('bu-photo-status').textContent = 'Photo prete : ' + bureauPhotoFile.name;
+        }
+    });
+
+    $('bu-cancel-btn').addEventListener('click', resetBureauForm);
+
+    $('bu-save-btn').addEventListener('click', function () {
+        var prenom = $('bu-prenom').value.trim();
+        var nom = $('bu-nom').value.trim();
+        var fonctionFr = $('bu-fonction-fr').value.trim();
+        if (!prenom && !nom) { toast('Prenom ou nom requis', false); return; }
+        if (!fonctionFr) { toast('Fonction (francais) requise', false); return; }
+
+        var formData = new FormData();
+        if (bureauEditingId) formData.append('id', bureauEditingId);
+        formData.append('prenom', prenom);
+        formData.append('nom', nom);
+        formData.append('fonction_fr', fonctionFr);
+        formData.append('fonction_eu', $('bu-fonction-eu').value.trim());
+        if (bureauPhotoFile) formData.append('photo', bureauPhotoFile);
+
+        var url = API + '?action=' + (bureauEditingId ? 'bureau-update' : 'bureau-create');
+        fetch(url, { method: 'POST', body: formData })
+            .then(function (r) { return r.json(); })
+            .then(function (d) {
+                if (d.ok) {
+                    toast(bureauEditingId ? 'Membre modifie' : 'Membre ajoute', true);
+                    resetBureauForm();
+                    loadBureau();
+                } else {
+                    toast('Erreur : ' + (d.error || 'inconnue'), false);
+                }
+            });
     });
 
     // --- Init ---

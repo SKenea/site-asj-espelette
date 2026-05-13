@@ -80,23 +80,12 @@
         </div>
     </section>
 
-    <!-- Organigramme / Bureau -->
+    <!-- Organigramme / Bureau (chargé dynamiquement depuis /admin/api.php?action=bureau) -->
     <section class="section section-bureau">
         <div class="container">
             <h2 class="section-title">Le bureau</h2>
-            <div class="bureau-grid">
-                <div class="bureau-card">
-                    <h3>Pr&eacute;sident</h3>
-                    <p class="placeholder-text">[Nom &agrave; compl&eacute;ter]</p>
-                </div>
-                <div class="bureau-card">
-                    <h3>Secr&eacute;taire</h3>
-                    <p class="placeholder-text">[Nom &agrave; compl&eacute;ter]</p>
-                </div>
-                <div class="bureau-card">
-                    <h3>Tr&eacute;sorier</h3>
-                    <p class="placeholder-text">[Nom &agrave; compl&eacute;ter]</p>
-                </div>
+            <div class="bureau-grid" id="bureau-grid" data-lang="fr">
+                <p class="placeholder-text" id="bureau-empty">Chargement...</p>
             </div>
         </div>
     </section>
@@ -188,5 +177,6 @@
     </footer>
 
     <script src="/src/js/main.js"></script>
+    <script src="/src/js/bureau.js" defer></script>
 </body>
 </html>
