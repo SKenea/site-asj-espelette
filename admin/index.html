@@ -487,6 +487,45 @@
         t.className = 'toast show ' + (ok ? 'toast-ok' : 'toast-err');
         setTimeout(function() { t.className = 'toast'; }, 3000);
     }
+    function escapeHtml(s) {
+        return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+    }
+    function getInitials(prenom, nom) {
+        var first = (prenom || '?').charAt(0);
+        var last = (nom || '').charAt(0);
+        return ((first + last).toUpperCase()) || '?';
+    }
+    // Avatar 48px pour la liste admin : photo si présente, sinon cercle bleu avec initiales.
+    function renderListAvatar(item, uploadSubdir) {
+        if (item.photo) {
+            return '<img src="/admin/uploads/' + uploadSubdir + '/' + item.photo
+                + '" alt="" style="width:48px;height:48px;border-radius:50%;'
+                + 'object-fit:cover;margin-right:0.8rem;">';
+        }
+        return '<span style="display:inline-flex;align-items:center;justify-content:center;'
+            + 'width:48px;height:48px;border-radius:50%;background:var(--blue);color:#fff;'
+            + 'font-weight:600;font-size:0.9rem;margin-right:0.8rem;">'
+            + escapeHtml(getInitials(item.prenom, item.nom)) + '</span>';
+    }
+    // Câble une zone d'upload : click pour ouvrir l'input, drag-drop pour glisser
+    // des fichiers. onFiles reçoit une FileList non vide.
+    function wireUploadZone(zoneId, inputId, onFiles) {
+        var zone = $(zoneId);
+        var input = $(inputId);
+        zone.addEventListener('click', function () { input.click(); });
+        zone.addEventListener('dragover', function (e) { e.preventDefault(); zone.classList.add('dragover'); });
+        zone.addEventListener('dragleave', function () { zone.classList.remove('dragover'); });
+        zone.addEventListener('drop', function (e) {
+            e.preventDefault();
+            zone.classList.remove('dragover');
+            if (e.dataTransfer.files.length) onFiles(e.dataTransfer.files);
+        });
+        input.addEventListener('change', function () {
+            if (input.files.length) onFiles(input.files);
+        });
+    }
 
     // --- Auth ---
     function checkAuth() {
@@ -676,19 +715,11 @@
         });
     };
 
-    // Upload zone
-    var uploadZone = $('upload-zone');
-    var photoInput = $('photo-input');
-
-    uploadZone.addEventListener('click', function() { photoInput.click(); });
-    uploadZone.addEventListener('dragover', function(e) { e.preventDefault(); uploadZone.classList.add('dragover'); });
-    uploadZone.addEventListener('dragleave', function() { uploadZone.classList.remove('dragover'); });
-    uploadZone.addEventListener('drop', function(e) {
-        e.preventDefault();
-        uploadZone.classList.remove('dragover');
-        uploadFiles(e.dataTransfer.files);
+    // Upload zone galerie (multi-fichiers)
+    wireUploadZone('upload-zone', 'photo-input', function (files) {
+        uploadFiles(files);
+        $('photo-input').value = '';
     });
-    photoInput.addEventListener('change', function() { uploadFiles(photoInput.files); photoInput.value = ''; });
 
     function uploadFiles(files) {
         var category = $('photo-category').value;
@@ -859,13 +890,9 @@
             }
             var html = '';
             members.forEach(function (m) {
-                var initials = ((m.prenom || '?').charAt(0) + (m.nom || '').charAt(0)).toUpperCase() || '?';
-                var photoHtml = m.photo
-                    ? '<img src="/admin/uploads/bureau/' + m.photo + '" alt="" style="width:48px;height:48px;border-radius:50%;object-fit:cover;margin-right:0.8rem;">'
-                    : '<span style="display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:var(--blue);color:#fff;font-weight:600;font-size:0.9rem;margin-right:0.8rem;">' + escapeHtml(initials) + '</span>';
                 html += '<div class="article-item">' +
                     '<div class="article-info" style="display:flex;align-items:center;">' +
-                        photoHtml +
+                        renderListAvatar(m, 'bureau') +
                         '<div>' +
                             '<h3>' + escapeHtml(m.prenom + ' ' + m.nom) + '</h3>' +
                             '<div class="meta">' + escapeHtml(m.fonction_fr) +
@@ -886,12 +913,6 @@
             host.querySelectorAll('[data-bu-delete]').forEach(function (b) {
                 b.addEventListener('click', function () { deleteBureau(parseInt(b.dataset.buDelete, 10)); });
             });
-        });
-    }
-
-    function escapeHtml(s) {
-        return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
-            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
         });
     }
 
@@ -941,23 +962,10 @@
         });
     };
 
-    // Upload zone — drag-drop ou click
-    $('bureau-upload-zone').addEventListener('click', function () { $('bu-photo-input').click(); });
-    $('bureau-upload-zone').addEventListener('dragover', function (e) { e.preventDefault(); $('bureau-upload-zone').classList.add('dragover'); });
-    $('bureau-upload-zone').addEventListener('dragleave', function () { $('bureau-upload-zone').classList.remove('dragover'); });
-    $('bureau-upload-zone').addEventListener('drop', function (e) {
-        e.preventDefault();
-        $('bureau-upload-zone').classList.remove('dragover');
-        if (e.dataTransfer.files.length) {
-            bureauPhotoFile = e.dataTransfer.files[0];
-            $('bu-photo-status').textContent = 'Photo prete : ' + bureauPhotoFile.name;
-        }
-    });
-    $('bu-photo-input').addEventListener('change', function () {
-        if (this.files.length) {
-            bureauPhotoFile = this.files[0];
-            $('bu-photo-status').textContent = 'Photo prete : ' + bureauPhotoFile.name;
-        }
+    // Upload zone bureau (1 fichier, on garde le premier)
+    wireUploadZone('bureau-upload-zone', 'bu-photo-input', function (files) {
+        bureauPhotoFile = files[0];
+        $('bu-photo-status').textContent = 'Photo prete : ' + bureauPhotoFile.name;
     });
 
     $('bu-cancel-btn').addEventListener('click', resetBureauForm);
@@ -1047,14 +1055,10 @@
 
         var html = '';
         coachs.forEach(function (c) {
-            var initials = ((c.prenom || '?').charAt(0) + (c.nom || '').charAt(0)).toUpperCase() || '?';
-            var photoHtml = c.photo
-                ? '<img src="/admin/uploads/coachs/' + c.photo + '" alt="" style="width:48px;height:48px;border-radius:50%;object-fit:cover;margin-right:0.8rem;">'
-                : '<span style="display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:50%;background:var(--blue);color:#fff;font-weight:600;font-size:0.9rem;margin-right:0.8rem;">' + escapeHtml(initials) + '</span>';
             var equipesLabels = (c.equipes || []).map(function (k) { return labelByKey[k] || k; }).join(', ') || '<i>aucune équipe</i>';
             html += '<div class="article-item">' +
                 '<div class="article-info" style="display:flex;align-items:center;">' +
-                    photoHtml +
+                    renderListAvatar(c, 'coachs') +
                     '<div>' +
                         '<h3>' + escapeHtml(c.prenom + ' ' + c.nom) + '</h3>' +
                         '<div class="meta">' + escapeHtml(c.fonction_fr) +
@@ -1125,22 +1129,9 @@
         });
     };
 
-    $('coachs-upload-zone').addEventListener('click', function () { $('co-photo-input').click(); });
-    $('coachs-upload-zone').addEventListener('dragover', function (e) { e.preventDefault(); $('coachs-upload-zone').classList.add('dragover'); });
-    $('coachs-upload-zone').addEventListener('dragleave', function () { $('coachs-upload-zone').classList.remove('dragover'); });
-    $('coachs-upload-zone').addEventListener('drop', function (e) {
-        e.preventDefault();
-        $('coachs-upload-zone').classList.remove('dragover');
-        if (e.dataTransfer.files.length) {
-            coachsPhotoFile = e.dataTransfer.files[0];
-            $('co-photo-status').textContent = 'Photo prete : ' + coachsPhotoFile.name;
-        }
-    });
-    $('co-photo-input').addEventListener('change', function () {
-        if (this.files.length) {
-            coachsPhotoFile = this.files[0];
-            $('co-photo-status').textContent = 'Photo prete : ' + coachsPhotoFile.name;
-        }
+    wireUploadZone('coachs-upload-zone', 'co-photo-input', function (files) {
+        coachsPhotoFile = files[0];
+        $('co-photo-status').textContent = 'Photo prete : ' + coachsPhotoFile.name;
     });
 
     $('co-cancel-btn').addEventListener('click', resetCoachsForm);
